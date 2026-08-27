@@ -97,7 +97,7 @@ export const LandingPageView: React.FC = () => {
   const [chatMessages, setChatMessages] = useState<{ sender: 'bot' | 'user'; text: string; time: string }[]>([
     {
       sender: 'bot',
-      text: 'Olá! Sou a assistente virtual da CT ALPHA Hub. Como posso te ajudar hoje? Você pode tirar dúvidas sobre nossos planos, horários ou agendar uma aula grátis!',
+      text: 'Olá! Sou a assistente virtual da CT ALPHA. Como posso te ajudar hoje? Tire dúvidas sobre planos, horários ou agende sua aula grátis!',
       time: 'Agora'
     }
   ]);
@@ -121,7 +121,7 @@ export const LandingPageView: React.FC = () => {
       if (lower.includes('plano') || lower.includes('valor') || lower.includes('preço') || lower.includes('quanto custa')) {
         responseText = 'Nossos planos começam em R$ 89,90/mês (Musculação). O Plano Alpha VIP custa R$ 139,90/mês e inclui Musculação, Crossfit e Lutas nas 2 unidades de Aliança/PE, sem taxa de adesão!';
       } else if (lower.includes('aula') || lower.includes('gratis') || lower.includes('experimental') || lower.includes('grátis') || lower.includes('agendar')) {
-        responseText = 'Você pode fazer uma aula experimental gratuita sem compromisso! Basta clicar no botão "Agendar Aula Grátis" ou me enviar seu nome e telefone por aqui.';
+        responseText = 'Você pode fazer uma aula experimental gratuita sem compromisso! Basta clicar no botão "MATRICULE-SE JÁ" ou me enviar seu nome e telefone por aqui.';
       } else if (lower.includes('horario') || lower.includes('horário') || lower.includes('abre') || lower.includes('fecha')) {
         responseText = 'A Unidade 1 (Centro) abre de Seg a Sex das 05:00 às 22:00 e Sábado das 06:00 às 14:00. A Unidade 2 abre das 05:30 às 21:30!';
       } else if (lower.includes('onde') || lower.includes('endereco') || lower.includes('endereço') || lower.includes('local')) {
@@ -129,7 +129,7 @@ export const LandingPageView: React.FC = () => {
       } else if (lower.includes('luta') || lower.includes('muay thai') || lower.includes('jiu') || lower.includes('crossfit')) {
         responseText = 'Temos turmas diárias de Muay Thai, Jiu-Jitsu e Box de Crossfit com professores dedicados tanto para iniciantes quanto atletas!';
       } else {
-        responseText = 'Temos planos a partir de R$ 89,90, 2 unidades em Aliança/PE e aulas de Musculação, Crossfit e Lutas. Quer que eu agende sua aula experimental gratuita com a nossa recepção?';
+        responseText = 'Temos planos a partir de R$ 89,90, 2 unidades em Aliança/PE e aulas de Musculação, Crossfit e Lutas. Deseja agendar uma visita ou aula experimental gratuita?';
       }
 
       setChatMessages(prev => [...prev, {
@@ -163,8 +163,8 @@ export const LandingPageView: React.FC = () => {
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-alpha-500 selection:text-white">
       
-      {/* 1. Top Navbar (Clean Style) */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 sm:px-10 py-3 flex items-center justify-between shadow-xs">
+      {/* 1. Top Navbar */}
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 sm:px-8 py-3 flex items-center justify-between shadow-xs">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-slate-900 p-1.5 flex items-center justify-center shadow-xs">
             <img src="/logo.png" alt="CT ALPHA" className="w-full h-full object-contain" />
@@ -178,7 +178,7 @@ export const LandingPageView: React.FC = () => {
         </div>
 
         {/* Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-8 text-xs font-bold text-slate-700">
+        <nav className="hidden lg:flex items-center gap-7 text-xs font-bold text-slate-700">
           <a href="#unidades" className="hover:text-alpha-500 transition-colors">Unidades</a>
           <a href="#planos" className="hover:text-alpha-500 transition-colors">Planos & Preços</a>
           <a href="#experiencia" className="hover:text-alpha-500 transition-colors">Aulas & Treinos</a>
@@ -189,98 +189,205 @@ export const LandingPageView: React.FC = () => {
           >
             Espaço do Aluno
           </button>
+          <a 
+            href="https://www.instagram.com/academiactalpha" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="hover:text-alpha-500 transition-colors flex items-center gap-1 text-slate-500"
+          >
+            <Instagram className="w-3.5 h-3.5" /> @academiactalpha
+          </a>
         </nav>
 
         {/* CTA Buttons */}
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => setCurrentView('login')}
-            className="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-all"
+          <button 
+            onClick={() => setCurrentView('student_login')} 
+            className="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-slate-900 px-3.5 py-2 rounded-full border border-slate-200 hover:bg-slate-50 transition-all"
           >
-            <LogIn className="w-3.5 h-3.5" />
-            Acesso Gestor
+            <User className="w-3.5 h-3.5" /> Já sou aluno
           </button>
 
           <button
             onClick={() => setIsModalOpen(true)}
             className="bg-alpha-500 hover:bg-alpha-600 text-white font-extrabold text-xs px-5 py-2.5 rounded-full uppercase tracking-wider transition-all shadow-sm hover:shadow-alpha-500/20 active:scale-95"
           >
-            Agendar Aula Grátis
+            MATRICULE-SE JÁ
+          </button>
+
+          <button
+            onClick={() => setCurrentView('login')}
+            className="p-2 text-slate-400 hover:text-slate-900 rounded-full border border-slate-200 hover:bg-slate-50 transition-all"
+            title="Acesso Administrativo"
+          >
+            <LogIn className="w-4 h-4" />
           </button>
         </div>
       </header>
 
-      {/* 2. Hero Section */}
-      <section className="relative overflow-hidden bg-slate-950 text-white py-16 sm:py-24 px-4 sm:px-10">
-        <div className="absolute inset-0 opacity-25 bg-[radial-gradient(#FF5500_1px,transparent_1px)] [background-size:16px_16px]"></div>
-        
-        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 items-center relative z-10">
-          <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/15 px-3.5 py-1.5 rounded-full text-xs font-bold text-alpha-400 backdrop-blur-md">
+      {/* 2. Hero Section — 80/20 Rounded Banner com margem branca e foto do CT ALPHA */}
+      <section className="px-3 sm:px-6 md:px-8 pt-3 pb-8 max-w-[1440px] mx-auto">
+        <div className="relative rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-2xl bg-slate-950 text-white min-h-[500px] sm:min-h-[580px] flex items-center p-6 sm:p-12 md:p-16 border border-slate-800">
+          
+          {/* Hero Background Image */}
+          <div className="absolute inset-0 z-0">
+            <img 
+              src="/hero_bg.jpg" 
+              alt="CT ALPHA Musculação e Crossfit" 
+              className="w-full h-full object-cover object-center scale-105"
+            />
+            {/* Dark & Orange Atmospheric Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/75 to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+          </div>
+
+          {/* Hero Content */}
+          <div className="relative z-10 max-w-2xl space-y-6">
+            
+            {/* Region Badge */}
+            <div className="inline-flex items-center gap-2 bg-alpha-500 text-white px-3.5 py-1.5 rounded-full text-[11px] font-black uppercase tracking-wider shadow-md">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>O Maior e Mais Completo CT de Aliança - PE</span>
+              <span>O Maior Centro de Treinamento da Região</span>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight font-sans leading-none">
-              Transforme seu corpo no <span className="text-alpha-500">CT ALPHA</span>
-            </h1>
+            {/* Main Title */}
+            <div className="space-y-1">
+              <h1 className="text-4xl sm:text-6xl md:text-7xl font-black uppercase tracking-tighter leading-none font-sans drop-shadow-md">
+                TRANSFORME
+              </h1>
+              <h2 className="text-4xl sm:text-6xl md:text-7xl font-black uppercase tracking-tighter leading-none font-sans text-amber-400 drop-shadow-md">
+                SEU CORPO
+              </h2>
+            </div>
 
-            <p className="text-slate-300 text-sm sm:text-base max-w-xl font-normal leading-relaxed">
-              Musculação de alta performance, Box oficial de Crossfit e Tatame de Lutas. Duas unidades modernas em Aliança com equipamentos de ponta e professores qualificados.
+            {/* Description */}
+            <p className="text-slate-200 text-sm sm:text-base font-medium max-w-xl leading-relaxed drop-shadow-sm">
+              Musculação de alta performance, Box de Crossfit oficial e Tatame de Lutas. Treine em 2 unidades completas em Aliança/PE com acompanhamento de treinador e treinos personalizados.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 pt-2">
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="w-full sm:w-auto bg-alpha-500 hover:bg-alpha-600 text-white font-black text-sm px-8 py-4 rounded-full uppercase tracking-wider transition-all shadow-lg hover:shadow-alpha-500/30 flex items-center justify-center gap-2"
-              >
-                <span>Garantir Aula Experimental</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-
-              <a
-                href="#planos"
-                className="w-full sm:w-auto bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-sm px-6 py-4 rounded-full transition-all text-center"
-              >
-                Ver Planos a partir de R$ 89,90
-              </a>
+            {/* Features Pills */}
+            <div className="flex flex-wrap items-center gap-2 pt-1">
+              <span className="bg-black/60 backdrop-blur-md border border-white/15 px-3 py-1 rounded-full text-xs font-bold text-slate-200">
+                ✓ 2 Unidades em Aliança
+              </span>
+              <span className="bg-black/60 backdrop-blur-md border border-white/15 px-3 py-1 rounded-full text-xs font-bold text-slate-200">
+                ✓ Ficha Digital no App
+              </span>
+              <span className="bg-black/60 backdrop-blur-md border border-white/15 px-3 py-1 rounded-full text-xs font-bold text-slate-200">
+                ✓ Aulas Coletivas Inclusas
+              </span>
             </div>
 
-            <div className="grid grid-cols-3 gap-4 pt-6 border-t border-white/10 text-center sm:text-left">
-              <div>
-                <span className="text-2xl font-black text-white block">2</span>
-                <span className="text-xs text-slate-400">Unidades em Aliança</span>
+            {/* CTA Buttons */}
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="bg-alpha-500 hover:bg-alpha-600 text-white font-black text-xs sm:text-sm px-8 py-3.5 rounded-full uppercase tracking-wider transition-all shadow-xl hover:scale-105 active:scale-95"
+              >
+                MATRICULE-SE JÁ
+              </button>
+
+              <button
+                onClick={() => setCurrentView('student_login')}
+                className="bg-white/15 hover:bg-white/25 backdrop-blur-md border border-white/20 text-white font-bold text-xs sm:text-sm px-6 py-3.5 rounded-full transition-all flex items-center gap-2"
+              >
+                <User className="w-4 h-4" />
+                <span>Espaço do Aluno</span>
+              </button>
+            </div>
+
+            {/* Status Footer Pill */}
+            <div className="pt-2">
+              <span className="text-[11px] font-black tracking-widest text-amber-400 uppercase">
+                /// VAGAS ABERTAS PARA NOVOS ALUNOS
+              </span>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      {/* 3. Section: Encontre a Academia Mais Próxima */}
+      <section id="unidades" className="py-12 px-4 sm:px-8 max-w-6xl mx-auto space-y-8">
+        <div className="text-center space-y-2">
+          <h2 className="text-2xl sm:text-3xl font-black uppercase text-slate-900 tracking-tight">
+            ENCONTRE A ACADEMIA <span className="text-alpha-500">MAIS PRÓXIMA</span>
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-500">Duas unidades estratégicas em Aliança/PE para você treinar onde for melhor</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Unidade 1 */}
+          <div className="rounded-3xl overflow-hidden border border-slate-200 bg-white shadow-md hover:border-alpha-500 transition-all">
+            <div className="h-52 relative">
+              <img src="/facade.jpg" alt="Unidade 1 Matriz" className="w-full h-full object-cover" />
+              <div className="absolute top-3 left-3 bg-slate-900/90 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase">
+                Unidade 1 • Matriz (Centro)
               </div>
-              <div>
-                <span className="text-2xl font-black text-white block">3</span>
-                <span className="text-xs text-slate-400">Modalidades Integradas</span>
-              </div>
-              <div>
-                <span className="text-2xl font-black text-emerald-400 block">+400</span>
-                <span className="text-xs text-slate-400">Alunos Ativos</span>
+            </div>
+            <div className="p-6 space-y-3 text-xs">
+              <h3 className="text-base font-black uppercase text-slate-900">CT ALPHA Matriz</h3>
+              <p className="text-slate-600 flex items-start gap-2">
+                <MapPin className="w-4 h-4 text-alpha-500 shrink-0 mt-0.5" />
+                <span>Rua Marechal Deodoro da Fonseca, 150 • Centro, Aliança - PE</span>
+              </p>
+              <p className="text-slate-600 flex items-center gap-2">
+                <Clock className="w-4 h-4 text-alpha-500 shrink-0" />
+                <span>Seg a Sex: 05h às 22h | Sáb: 06h às 14h</span>
+              </p>
+              <div className="pt-2 flex items-center justify-between border-t border-slate-100">
+                <span className="font-bold text-emerald-600">● Aberto Agora</span>
+                <button
+                  onClick={() => {
+                    setLeadUnit('unidade-1');
+                    setIsModalOpen(true);
+                  }}
+                  className="text-alpha-500 font-bold hover:underline"
+                >
+                  Agendar Aula Grátis &rarr;
+                </button>
               </div>
             </div>
           </div>
 
-          <div className="lg:col-span-5 relative">
-            <div className="rounded-3xl overflow-hidden border-2 border-white/15 shadow-2xl bg-slate-900 aspect-4/3 relative">
-              <img 
-                src="/facade.jpg" 
-                alt="Fachada CT ALPHA" 
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-              <div className="absolute bottom-4 left-4 right-4 p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 text-xs text-white">
-                <span className="font-black uppercase text-alpha-400 block">Unidade 1 • Matriz</span>
-                <span className="text-slate-200">Rua Marechal Deodoro da Fonseca, 150 • Centro</span>
+          {/* Unidade 2 */}
+          <div className="rounded-3xl overflow-hidden border border-slate-200 bg-white shadow-md hover:border-alpha-500 transition-all">
+            <div className="h-52 relative">
+              <img src="/combat_bg.jpg" alt="Unidade 2 Expansão" className="w-full h-full object-cover" />
+              <div className="absolute top-3 left-3 bg-slate-900/90 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase">
+                Unidade 2 • Expansão & Tatame
+              </div>
+            </div>
+            <div className="p-6 space-y-3 text-xs">
+              <h3 className="text-base font-black uppercase text-slate-900">CT ALPHA Expansão</h3>
+              <p className="text-slate-600 flex items-start gap-2">
+                <MapPin className="w-4 h-4 text-alpha-500 shrink-0 mt-0.5" />
+                <span>Av. Gen. Antônio Coelho, 420 • Aliança - PE</span>
+              </p>
+              <p className="text-slate-600 flex items-center gap-2">
+                <Clock className="w-4 h-4 text-alpha-500 shrink-0" />
+                <span>Seg a Sex: 05h30 às 21h30 | Sáb: 07h às 12h</span>
+              </p>
+              <div className="pt-2 flex items-center justify-between border-t border-slate-100">
+                <span className="font-bold text-emerald-600">● Aberto Agora</span>
+                <button
+                  onClick={() => {
+                    setLeadUnit('unidade-2');
+                    setIsModalOpen(true);
+                  }}
+                  className="text-alpha-500 font-bold hover:underline"
+                >
+                  Agendar Aula Grátis &rarr;
+                </button>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 3. Section: Modalidades */}
-      <section id="experiencia" className="py-16 px-4 sm:px-10 max-w-6xl mx-auto space-y-10">
+      {/* 4. Section: Modalidades */}
+      <section id="experiencia" className="py-14 px-4 sm:px-8 max-w-6xl mx-auto space-y-10">
         <div className="text-center space-y-2">
           <span className="text-xs font-black text-alpha-500 uppercase tracking-widest">Modalidades Oficiais</span>
           <h2 className="text-2xl sm:text-4xl font-black uppercase text-slate-900">
@@ -336,8 +443,8 @@ export const LandingPageView: React.FC = () => {
         </div>
       </section>
 
-      {/* 4. Section: Planos & Preços */}
-      <section id="planos" className="py-16 px-4 sm:px-10 bg-slate-50 border-y border-slate-200">
+      {/* 5. Section: Planos & Preços */}
+      <section id="planos" className="py-16 px-4 sm:px-8 bg-slate-50 border-y border-slate-200">
         <div className="max-w-6xl mx-auto space-y-10">
           <div className="text-center space-y-2">
             <span className="text-xs font-black text-alpha-500 uppercase tracking-widest">Planos Flexíveis</span>
@@ -345,7 +452,7 @@ export const LandingPageView: React.FC = () => {
               Escolha o plano ideal para sua rotina
             </h2>
             <p className="text-xs sm:text-sm text-slate-500 max-w-xl mx-auto">
-              Sem fidelidade abusiva, sem taxa surpresa. Cancele quando quiser no débito recorrente.
+              Sem taxa de matrícula abusiva. Cancele quando quiser no débito recorrente.
             </p>
           </div>
 
@@ -439,8 +546,8 @@ export const LandingPageView: React.FC = () => {
         </div>
       </section>
 
-      {/* 5. Section: FAQ & Dúvidas Frequentes (NOVO) */}
-      <section id="faq" className="py-16 px-4 sm:px-10 max-w-4xl mx-auto space-y-10">
+      {/* 6. Section: FAQ & Dúvidas Frequentes */}
+      <section id="faq" className="py-16 px-4 sm:px-8 max-w-4xl mx-auto space-y-10">
         <div className="text-center space-y-2">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-alpha-500/10 text-alpha-600 text-xs font-bold border border-alpha-500/20">
             <HelpCircle className="w-3.5 h-3.5" />
@@ -516,7 +623,7 @@ export const LandingPageView: React.FC = () => {
         </div>
       </section>
 
-      {/* 6. Modal de Matrícula / Aula Experimental Grátis */}
+      {/* 7. Modal de Matrícula / Aula Experimental Grátis */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="max-w-md w-full bg-white rounded-3xl p-7 shadow-2xl relative animate-scaleUp text-slate-900 border border-slate-200">
@@ -619,7 +726,7 @@ export const LandingPageView: React.FC = () => {
         </div>
       )}
 
-      {/* 7. FLOATING INTERACTIVE AI FAQ CHATBOT WIDGET (NOVO) */}
+      {/* 8. FLOATING INTERACTIVE AI FAQ CHATBOT WIDGET */}
       <div className="fixed bottom-6 right-6 z-50">
         {!isAIChatOpen ? (
           <button
@@ -733,8 +840,8 @@ export const LandingPageView: React.FC = () => {
         )}
       </div>
 
-      {/* 8. Comprehensive Footer */}
-      <footer className="bg-[#0B0E14] text-slate-400 py-12 px-4 sm:px-10 border-t border-slate-800 text-xs">
+      {/* 9. Comprehensive Footer */}
+      <footer className="bg-[#0B0E14] text-slate-400 py-12 px-4 sm:px-8 border-t border-slate-800 text-xs">
         <div className="max-w-6xl mx-auto space-y-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-8 border-b border-slate-800">
             <div className="flex items-center gap-3">
