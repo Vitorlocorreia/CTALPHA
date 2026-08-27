@@ -56,6 +56,7 @@ export const StudentsView: React.FC = () => {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedModality, setSelectedModality] = useState<string>('todas');
+  const [selectedStatus, setSelectedStatus] = useState<string>('todos');
   const queryParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
   const initialStudentId = queryParams?.get('student');
   const initialTab = (queryParams?.get('tab') as any) || 'geral';
@@ -627,10 +628,71 @@ export const StudentsView: React.FC = () => {
                       </div>
                     </div>
                   </div>
+
+                  {/* Anamnese e Avaliação dentro de Dados Cadastrais */}
+                  <div className="p-4 rounded-xl bg-white dark:bg-[#101522] border border-alpha-500/30 dark:border-alpha-500/30 space-y-3 shadow-xs">
+                    <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
+                      <div className="flex items-center gap-2">
+                        <ClipboardList className="w-4 h-4 text-alpha-500" />
+                        <h4 className="font-bold text-slate-900 dark:text-white text-xs uppercase tracking-wider">
+                          Anamnese e Avaliação
+                        </h4>
+                      </div>
+                      <button
+                        onClick={() => handleOpenAssessmentModal(activeStudentDrawer, activeStudentAssessment)}
+                        className="px-3 py-1 bg-alpha-500 hover:bg-alpha-600 text-white font-bold rounded-lg text-xs flex items-center gap-1 transition-all"
+                      >
+                        <Edit3 className="w-3 h-3" />
+                        <span>Ver avaliação completa</span>
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-[11px]">
+                      <div className="p-2 rounded-lg bg-slate-50 dark:bg-[#0D121D] border border-slate-200/60 dark:border-slate-800">
+                        <span className="text-slate-400 text-[10px] block">Objetivo</span>
+                        <strong className="text-slate-900 dark:text-white text-xs">{activeStudentAssessment?.primaryGoal || 'Hipertrofia'}</strong>
+                      </div>
+
+                      <div className="p-2 rounded-lg bg-slate-50 dark:bg-[#0D121D] border border-slate-200/60 dark:border-slate-800">
+                        <span className="text-slate-400 text-[10px] block">Experiência</span>
+                        <strong className="text-slate-900 dark:text-white text-xs capitalize">{activeStudentAssessment?.experienceLevel || 'Intermediário'} · {activeStudentAssessment?.trainingYears || 2.5} anos</strong>
+                      </div>
+
+                      <div className="p-2 rounded-lg bg-slate-50 dark:bg-[#0D121D] border border-slate-200/60 dark:border-slate-800">
+                        <span className="text-slate-400 text-[10px] block">Frequência</span>
+                        <strong className="text-slate-900 dark:text-white text-xs">{activeStudentAssessment?.daysPerWeek || 4}x por semana</strong>
+                      </div>
+
+                      <div className="p-2 rounded-lg bg-slate-50 dark:bg-[#0D121D] border border-slate-200/60 dark:border-slate-800">
+                        <span className="text-slate-400 text-[10px] block">Disponibilidade</span>
+                        <strong className="text-slate-900 dark:text-white text-xs">{activeStudentAssessment?.sessionDurationMinutes || 60} min/sessão</strong>
+                      </div>
+
+                      <div className="p-2 rounded-lg bg-slate-50 dark:bg-[#0D121D] border border-slate-200/60 dark:border-slate-800">
+                        <span className="text-slate-400 text-[10px] block">Atenções</span>
+                        <strong className="text-amber-600 dark:text-amber-400 text-xs">{activeStudentAssessment?.prescriptionAlerts?.length || 1} relevante</strong>
+                      </div>
+
+                      <div className="p-2 rounded-lg bg-slate-50 dark:bg-[#0D121D] border border-slate-200/60 dark:border-slate-800">
+                        <span className="text-slate-400 text-[10px] block">Restrições declaradas</span>
+                        <strong className="text-amber-600 dark:text-amber-400 text-xs">{activeStudentAssessment?.avoidMovements?.length || 1}</strong>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500">
+                      <span>Última atualização: <strong>{activeStudentAssessment?.assessmentDate || '26/08/2026'}</strong></span>
+                      <button
+                        onClick={() => setDrawerTab('anamnese')}
+                        className="text-alpha-500 hover:underline font-bold"
+                      >
+                        Abrir aba completa de Anamnese →
+                      </button>
+                    </div>
+                  </div>
                 </div>
               )}
 
-              {/* TAB 3: ANAMNESE & AVALIAÇÃO (FONTE CENTRAL PERMANENTE) */}
+              {/* TAB 3: ANAMNESE & AVALIAÇÃO (DOSSIÊ CLÍNICO COMPLETO 8 SEÇÕES) */}
               {drawerTab === 'anamnese' && (
                 <div className="space-y-4">
                   {/* Status Banner */}
@@ -639,11 +701,11 @@ export const StudentsView: React.FC = () => {
                       <div className="flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
                         <h4 className="font-bold text-slate-900 dark:text-white text-sm">
-                          Prontuário de Anamnese & Avaliação
+                          Anamnese e Avaliação
                         </h4>
                       </div>
                       <p className="text-[11px] text-slate-500 mt-0.5">
-                        Última atualização: <strong>{activeStudentAssessment?.assessmentDate || '26/08/2026'}</strong> por <strong>{activeStudentAssessment?.assessorName || 'Coach Diego'}</strong>
+                        Última atualização: <strong>{activeStudentAssessment?.assessmentDate || '26/08/2026'}</strong> • Atualizado por: <strong>{activeStudentAssessment?.assessorName || 'Coach Diego'}</strong>
                       </p>
                     </div>
 
@@ -658,68 +720,86 @@ export const StudentsView: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Summary Grid */}
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    <div className="p-3 rounded-xl bg-white dark:bg-[#0D121D] border border-slate-200 dark:border-slate-800">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase block">Objetivo Principal</span>
-                      <span className="text-sm font-black text-slate-900 dark:text-white mt-1 block">
-                        {activeStudentAssessment?.primaryGoal || 'Hipertrofia'}
-                      </span>
-                    </div>
-
-                    <div className="p-3 rounded-xl bg-white dark:bg-[#0D121D] border border-slate-200 dark:border-slate-800">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase block">Experiência</span>
-                      <span className="text-sm font-black text-slate-900 dark:text-white mt-1 block capitalize">
-                        {activeStudentAssessment?.experienceLevel || 'Intermediário'} • {activeStudentAssessment?.trainingYears || 2} anos
-                      </span>
-                    </div>
-
-                    <div className="p-3 rounded-xl bg-white dark:bg-[#0D121D] border border-slate-200 dark:border-slate-800">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase block">Frequência & Tempo</span>
-                      <span className="text-sm font-black text-slate-900 dark:text-white mt-1 block">
-                        {activeStudentAssessment?.daysPerWeek || 4}x/sem • {activeStudentAssessment?.sessionDurationMinutes || 60}min
-                      </span>
-                    </div>
-
-                    <div className="p-3 rounded-xl bg-white dark:bg-[#0D121D] border border-slate-200 dark:border-slate-800">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase block">Dados Físicos</span>
-                      <span className="text-sm font-black text-slate-900 dark:text-white mt-1 block">
-                        {activeStudentAssessment?.weightKg || 80} kg • {(Number(activeStudentAssessment?.heightCm || 175) / 100).toFixed(2)} m
-                      </span>
-                    </div>
-
-                    <div className="p-3 rounded-xl bg-white dark:bg-[#0D121D] border border-slate-200 dark:border-slate-800">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase block">Preferências de Treino</span>
-                      <span className="text-xs font-bold text-slate-800 dark:text-slate-200 mt-1 block">
-                        {activeStudentAssessment?.preferenceWeightsVsMachines === 'maquinas' ? 'Máquinas' : 'Misto (Pesos + Máquinas)'}
-                      </span>
-                    </div>
-
-                    <div className="p-3 rounded-xl bg-white dark:bg-[#0D121D] border border-slate-200 dark:border-slate-800">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase block">Restrições / Cuidados</span>
-                      <span className="text-xs font-bold text-amber-600 dark:text-amber-400 mt-1 block">
-                        {activeStudentAssessment?.avoidMovements?.length || 0} movimentos declarados
-                      </span>
+                  {/* 1. Dados Físicos */}
+                  <div className="p-4 rounded-xl bg-white dark:bg-[#101522] border border-slate-200 dark:border-slate-800 space-y-2">
+                    <h5 className="font-bold text-xs text-slate-900 dark:text-white uppercase tracking-wider border-b border-slate-100 dark:border-slate-800 pb-1.5 flex items-center gap-1.5">
+                      <Activity className="w-3.5 h-3.5 text-alpha-500" />
+                      <span>1. Dados Físicos</span>
+                    </h5>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
+                      <div><span className="text-slate-400 block text-[10px]">Estatura / Altura:</span><strong>{(Number(activeStudentAssessment?.heightCm || 175) / 100).toFixed(2)} m ({activeStudentAssessment?.heightCm || 175} cm)</strong></div>
+                      <div><span className="text-slate-400 block text-[10px]">Peso Corporal:</span><strong>{activeStudentAssessment?.weightKg || 80} kg</strong></div>
+                      <div><span className="text-slate-400 block text-[10px]">Objetivo:</span><strong className="text-alpha-500">{activeStudentAssessment?.primaryGoal || 'Hipertrofia'}</strong></div>
+                      <div><span className="text-slate-400 block text-[10px]">Nível Atual:</span><strong className="capitalize">{activeStudentAssessment?.experienceLevel || 'Intermediário'}</strong></div>
                     </div>
                   </div>
 
-                  {/* Pain & Medical Alerts Box */}
-                  <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/20 space-y-2">
-                    <div className="flex items-center gap-2">
-                      <AlertTriangle className="w-4 h-4 text-amber-500" />
-                      <h5 className="font-bold text-xs text-amber-900 dark:text-amber-300">
-                        Alertas Clínicos & Prescrição
-                      </h5>
+                  {/* 2. Histórico & Experiência */}
+                  <div className="p-4 rounded-xl bg-white dark:bg-[#101522] border border-slate-200 dark:border-slate-800 space-y-2">
+                    <h5 className="font-bold text-xs text-slate-900 dark:text-white uppercase tracking-wider border-b border-slate-100 dark:border-slate-800 pb-1.5 flex items-center gap-1.5">
+                      <History className="w-3.5 h-3.5 text-blue-500" />
+                      <span>2. Histórico Esportivo</span>
+                    </h5>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px]">
+                      <div><span className="text-slate-400 block text-[10px]">Experiência Prévia:</span><strong>{activeStudentAssessment?.trainingYears || 2.5} anos de treino contínuo</strong></div>
+                      <div><span className="text-slate-400 block text-[10px]">Modalidades Praticadas:</span><strong>{activeStudentDrawer.modalities.join(', ').toUpperCase()}</strong></div>
+                      <div><span className="text-slate-400 block text-[10px]">Esportes Adicionais:</span><strong>{activeStudentAssessment?.otherSports?.join(', ') || 'Futebol de final de semana'}</strong></div>
                     </div>
-                    {activeStudentAssessment?.prescriptionAlerts && activeStudentAssessment.prescriptionAlerts.length > 0 ? (
-                      <ul className="text-xs text-amber-800 dark:text-amber-400 space-y-1 pl-4 list-disc">
-                        {activeStudentAssessment.prescriptionAlerts.map((alert, idx) => (
-                          <li key={idx}>{alert}</li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p className="text-xs text-slate-500">Nenhum alerta de limitação crítica declarado pelo aluno.</p>
-                    )}
+                  </div>
+
+                  {/* 3. Dores e Limitações */}
+                  <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/20 space-y-2">
+                    <h5 className="font-bold text-xs text-amber-900 dark:text-amber-300 uppercase tracking-wider border-b border-amber-500/20 pb-1.5 flex items-center gap-1.5">
+                      <HeartCrack className="w-3.5 h-3.5 text-amber-500" />
+                      <span>3. Dores, Limitações & Segurança</span>
+                    </h5>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px]">
+                      <div><span className="text-slate-400 block text-[10px]">Local & Lado da Dor:</span><strong className="text-amber-700 dark:text-amber-300">{activeStudentAssessment?.painDetails?.location || 'Joelho'} ({activeStudentAssessment?.painDetails?.side || 'direito'})</strong></div>
+                      <div><span className="text-slate-400 block text-[10px]">Intensidade Percebida:</span><strong className="text-amber-700 dark:text-amber-300">{activeStudentAssessment?.painDetails?.intensity || 3} / 10</strong></div>
+                      <div><span className="text-slate-400 block text-[10px]">Quando Ocorre:</span><strong>{activeStudentAssessment?.painDetails?.whenAppears || 'Em flexão profunda'}</strong></div>
+                      <div className="col-span-2 sm:col-span-3"><span className="text-slate-400 block text-[10px]">Movimentos Gatilho / A Evitar:</span><strong className="text-red-600">{activeStudentAssessment?.avoidMovements?.join(', ') || 'Agachamento livre profundo com carga alta'}</strong></div>
+                      <div className="col-span-2 sm:col-span-3"><span className="text-slate-400 block text-[10px]">Exercícios Tolerados / Seguros:</span><strong className="text-emerald-600">{activeStudentAssessment?.painDetails?.safeMovements || 'Leg press 45º, Cadeira Extensora controlada, Hack Machine'}</strong></div>
+                    </div>
+                  </div>
+
+                  {/* 4. Disponibilidade */}
+                  <div className="p-4 rounded-xl bg-white dark:bg-[#101522] border border-slate-200 dark:border-slate-800 space-y-2">
+                    <h5 className="font-bold text-xs text-slate-900 dark:text-white uppercase tracking-wider border-b border-slate-100 dark:border-slate-800 pb-1.5 flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5 text-emerald-500" />
+                      <span>4. Disponibilidade & Rotina</span>
+                    </h5>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
+                      <div><span className="text-slate-400 block text-[10px]">Dias por Semana:</span><strong>{activeStudentAssessment?.daysPerWeek || 4} dias</strong></div>
+                      <div><span className="text-slate-400 block text-[10px]">Duração da Sessão:</span><strong>{activeStudentAssessment?.sessionDurationMinutes || 60} minutos</strong></div>
+                      <div><span className="text-slate-400 block text-[10px]">Turno Preferido:</span><strong className="capitalize">{activeStudentAssessment?.preferredTimeOfDay || 'Noite'}</strong></div>
+                      <div><span className="text-slate-400 block text-[10px]">Dias Preferidos:</span><strong>{activeStudentAssessment?.preferredDays?.join(', ') || 'Seg, Ter, Qui, Sex'}</strong></div>
+                    </div>
+                  </div>
+
+                  {/* 5. Preferências & Estilo de Vida */}
+                  <div className="p-4 rounded-xl bg-white dark:bg-[#101522] border border-slate-200 dark:border-slate-800 space-y-2">
+                    <h5 className="font-bold text-xs text-slate-900 dark:text-white uppercase tracking-wider border-b border-slate-100 dark:border-slate-800 pb-1.5 flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-purple-500" />
+                      <span>5. Preferências & Estilo de Vida</span>
+                    </h5>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px]">
+                      <div><span className="text-slate-400 block text-[10px]">Exercícios Favoritos:</span><strong>{activeStudentAssessment?.favoriteExercises?.join(', ') || 'Supino Reto, Puxada Alta, Leg Press'}</strong></div>
+                      <div><span className="text-slate-400 block text-[10px]">Exercícios Evitados:</span><strong>{activeStudentAssessment?.dislikedExercises?.join(', ') || 'Agachamento Búlgaro'}</strong></div>
+                      <div><span className="text-slate-400 block text-[10px]">Equipamentos Preferidos:</span><strong>{activeStudentAssessment?.preferredEquipment?.join(', ') || 'Halteres, Máquinas, Polias'}</strong></div>
+                      <div><span className="text-slate-400 block text-[10px]">Média de Sono:</span><strong>{activeStudentAssessment?.sleepHoursAvg || 7.5} horas ({activeStudentAssessment?.sleepQuality || 'boa'})</strong></div>
+                      <div><span className="text-slate-400 block text-[10px]">Nível de Estresse:</span><strong className="capitalize">{activeStudentAssessment?.stressLevel || 'moderado'}</strong></div>
+                      <div><span className="text-slate-400 block text-[10px]">Rotina de Trabalho:</span><strong className="capitalize">{activeStudentAssessment?.workRoutine || 'sentado'}</strong></div>
+                    </div>
+                  </div>
+
+                  {/* 6. Observações do Treinador */}
+                  <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#0D121D] border border-slate-200 dark:border-slate-800 space-y-1.5">
+                    <h5 className="font-bold text-xs text-slate-900 dark:text-white uppercase tracking-wider">
+                      6. Observações Profissionais do Treinador
+                    </h5>
+                    <p className="text-slate-700 dark:text-slate-300 text-xs leading-relaxed">
+                      {activeStudentAssessment?.painDetails?.notes || 'Aluno muito disciplinado. Apresenta boa mobilidade de tornozelo e ótima resposta muscular para hipertrofia em membros superiores. Monitorar resposta de joelho nas séries pesadas de pernas.'}
+                    </p>
                   </div>
 
                   {/* History of Previous Assessments */}

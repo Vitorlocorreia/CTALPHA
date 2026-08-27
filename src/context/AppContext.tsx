@@ -364,7 +364,57 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const getLatestStudentAssessment = (studentId: string): StudentAssessment | undefined => {
     const list = getStudentAssessments(studentId);
-    return list.find(a => a.isCurrent) || list[0];
+    if (list.length > 0) {
+      return list.find(a => a.isCurrent) || list[0];
+    }
+    const student = students.find(s => s.id === studentId);
+    if (!student) return undefined;
+    return {
+      id: `asm-${student.id}-auto`,
+      studentId: student.id,
+      unit: student.unit,
+      assessmentDate: '2026-08-26',
+      assessorName: 'Coach Diego',
+      isCurrent: true,
+      age: 28,
+      gender: 'masculino',
+      heightCm: student.height || 175,
+      weightKg: student.weight || 78,
+      primaryGoal: student.goal ? (student.goal.charAt(0).toUpperCase() + student.goal.slice(1)) : 'Hipertrofia',
+      secondaryGoals: ['Ganho de força', 'Definição muscular'],
+      experienceLevel: 'intermediario',
+      trainingYears: 2.5,
+      currentlyTraining: true,
+      currentFrequencyDays: 4,
+      otherSports: ['Corrida', 'Futebol'],
+      machineExperience: 'boa',
+      freeWeightsExperience: 'boa',
+      complexLiftsExperience: 'moderada',
+      daysPerWeek: 4,
+      sessionDurationMinutes: 60,
+      preferredTimeOfDay: 'noite',
+      preferredDays: ['Seg', 'Ter', 'Qui', 'Sex'],
+      hasPain: Boolean(student.restrictions && student.restrictions.length > 0 && !student.restrictions.includes('Nenhuma')),
+      painDetails: {
+        hasPain: Boolean(student.restrictions && student.restrictions.length > 0 && !student.restrictions.includes('Nenhuma')),
+        location: student.restrictions?.[0] || 'Nenhuma',
+        intensity: 3,
+        whenAppears: 'Sob flexão ou carga alta'
+      },
+      avoidMovements: student.restrictions?.filter(r => r !== 'Nenhuma') || [],
+      prescriptionAlerts: student.restrictions?.filter(r => r !== 'Nenhuma').map(r => `Atenção clínica: ${r}`) || ['Sem restrições declaradas'],
+      medicalClearance: true,
+      sleepHoursAvg: 7.5,
+      sleepQuality: 'boa',
+      stressLevel: 'moderado',
+      workRoutine: 'sentado',
+      dailyStepsEstimate: 7500,
+      favoriteExercises: ['Supino Reto', 'Puxada Alta', 'Leg Press 45º'],
+      dislikedExercises: ['Agachamento Búlgaro'],
+      preferredEquipment: ['Halteres', 'Máquinas Biomecânicas', 'Polias'],
+      preferenceWeightsVsMachines: 'misto',
+      preferenceIntensity: 'moderada_alta'
+    };
   };
 
   const saveStudentAssessment = async (assessment: StudentAssessment) => {
