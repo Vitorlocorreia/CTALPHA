@@ -52,7 +52,7 @@ export const Navbar: React.FC = () => {
 
   const navItems = allNavItems.filter(item => {
     if (userRole === 'recepcao') return item.id === 'students';
-    if (userRole === 'personal') return item.id === 'workout_builder' || item.id === 'exercise_library' || item.id === 'workout_library';
+    if (userRole === 'personal' || (userRole as string) === 'treinador') return item.id === 'workout_builder' || item.id === 'exercise_library' || item.id === 'workout_library' || item.id === 'students';
     return true;
   });
 

@@ -107,9 +107,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const queryParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
   const initialView = queryParams?.get('view') || 'dashboard';
   const initialTheme = (queryParams?.get('theme') as 'light' | 'dark') || (typeof window !== 'undefined' && localStorage.getItem('theme') as 'light' | 'dark') || 'light';
+  const rawRole = queryParams?.get('role')?.toLowerCase();
+  const initialRole: UserRole = (rawRole === 'treinador' || rawRole === 'personal' || rawRole === 'coach') 
+    ? 'personal' 
+    : (rawRole === 'recepcao' || rawRole === 'aluno' || rawRole === 'gestor') 
+      ? (rawRole as UserRole) 
+      : 'gestor';
 
   const [currentView, setCurrentView] = useState<string>(initialView);
-  const [userRole, setUserRole] = useState<UserRole>((queryParams?.get('role') as UserRole) || 'gestor');
+  const [userRole, setUserRole] = useState<UserRole>(initialRole);
   const [selectedUnit, setSelectedUnit] = useState<UnitId>('todas');
   const [theme, setTheme] = useState<'light' | 'dark'>(initialTheme);
   const [students, setStudents] = useState<Student[]>(INITIAL_STUDENTS);

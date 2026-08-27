@@ -117,7 +117,7 @@ export const Sidebar: React.FC = () => {
         }
       ];
     }
-    if (userRole === 'personal') {
+    if (userRole === 'personal' || (userRole as string) === 'treinador') {
       return [
         {
           title: 'SALA DE TREINAMENTO',
@@ -135,10 +135,11 @@ export const Sidebar: React.FC = () => {
 
   const profileInfo = {
     gestor: { name: 'Abílio Alves', role: 'Diretor Geral', initial: 'A' },
-    recepcao: { name: 'Camila Soares', role: 'Recepção / Frente de Caixa', initial: 'C' },
-    personal: { name: 'Coach Diego', role: 'Treinador / Musculação', initial: 'D' },
+    recepcao: { name: 'Camila Soares', role: 'Recepção / Atendimento', initial: 'C' },
+    personal: { name: 'Coach Diego', role: 'Treinador / Prescritor', initial: 'D' },
+    treinador: { name: 'Coach Diego', role: 'Treinador / Prescritor', initial: 'D' },
     aluno: { name: 'Carlos Henrique', role: 'Aluno VIP', initial: 'C' },
-  }[userRole] || { name: 'Abílio Alves', role: 'Diretor Geral', initial: 'A' };
+  }[userRole] || { name: 'Coach Diego', role: 'Treinador / Prescritor', initial: 'D' };
 
   return (
     <aside className="w-64 bg-white dark:bg-[#0D121D] border-r border-slate-200 dark:border-slate-800 hidden lg:flex flex-col justify-between shrink-0 h-screen sticky top-0 transition-colors z-30 select-none">
