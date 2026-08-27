@@ -32,25 +32,7 @@ export const INITIAL_STUDENTS: Student[] = [
     weight: 82,
     restrictions: ['Nenhuma'],
     createdAt: '2023-03-12',
-    source: 'G3 (Importado)',
-    bioimpedance: {
-      weightKg: 82.4,
-      heightCm: 178,
-      bodyFatPercent: 14.8,
-      muscleMassKg: 40.2,
-      fatMassKg: 12.2,
-      visceralFatLevel: 5,
-      bmrKcal: 1860,
-      bodyWaterPercent: 61.5,
-      metabolicAge: 23,
-      lastAssessmentDate: '2026-08-15',
-      chestCm: 104,
-      waistCm: 82,
-      hipCm: 99,
-      armRightCm: 39.5,
-      thighRightCm: 59.0,
-      postureNotes: 'Excelente simetria de membros superiores. Tensão escapular adequada.'
-    }
+    source: 'G3 (Importado)'
   },
   {
     id: 'std-2',
@@ -72,25 +54,7 @@ export const INITIAL_STUDENTS: Student[] = [
     weight: 58,
     restrictions: ['Condromalácia Patelar (Joelho Leve)'],
     createdAt: '2024-01-15',
-    source: 'G3 (Importado)',
-    bioimpedance: {
-      weightKg: 58.1,
-      heightCm: 165,
-      bodyFatPercent: 19.2,
-      muscleMassKg: 26.8,
-      fatMassKg: 11.1,
-      visceralFatLevel: 3,
-      bmrKcal: 1390,
-      bodyWaterPercent: 57.0,
-      metabolicAge: 21,
-      lastAssessmentDate: '2026-08-10',
-      chestCm: 86,
-      waistCm: 67,
-      hipCm: 96,
-      armRightCm: 27.0,
-      thighRightCm: 54.5,
-      postureNotes: 'Evitar flexão de joelho >90º sob carga livre pesada.'
-    }
+    source: 'G3 (Importado)'
   },
   {
     id: 'std-3',
@@ -113,25 +77,7 @@ export const INITIAL_STUDENTS: Student[] = [
     weight: 94,
     restrictions: ['Lombalgia Leve'],
     createdAt: '2023-08-20',
-    source: 'G3 (Importado)',
-    bioimpedance: {
-      weightKg: 94.0,
-      heightCm: 181,
-      bodyFatPercent: 22.4,
-      muscleMassKg: 42.1,
-      fatMassKg: 21.0,
-      visceralFatLevel: 8,
-      bmrKcal: 1980,
-      bodyWaterPercent: 54.2,
-      metabolicAge: 29,
-      lastAssessmentDate: '2026-08-01',
-      chestCm: 110,
-      waistCm: 94,
-      hipCm: 106,
-      armRightCm: 41.0,
-      thighRightCm: 63.0,
-      postureNotes: 'Fortalecer core e estabilizadores lombares.'
-    }
+    source: 'G3 (Importado)'
   },
   {
     id: 'std-4',
@@ -153,25 +99,7 @@ export const INITIAL_STUDENTS: Student[] = [
     weight: 62,
     restrictions: ['Nenhuma'],
     createdAt: '2025-02-10',
-    source: 'Novo Cadastro',
-    bioimpedance: {
-      weightKg: 62.3,
-      heightCm: 160,
-      bodyFatPercent: 24.1,
-      muscleMassKg: 25.4,
-      fatMassKg: 15.0,
-      visceralFatLevel: 4,
-      bmrKcal: 1340,
-      bodyWaterPercent: 55.0,
-      metabolicAge: 26,
-      lastAssessmentDate: '2026-08-18',
-      chestCm: 89,
-      waistCm: 71,
-      hipCm: 98,
-      armRightCm: 28.5,
-      thighRightCm: 56.0,
-      postureNotes: 'Foco em déficit calórico e treino de força com alta densidade.'
-    }
+    source: 'Novo Cadastro'
   },
   {
     id: 'std-5',

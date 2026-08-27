@@ -97,25 +97,6 @@ export interface StudentAssessment {
   updatedAt?: string;
 }
 
-export interface BioimpedanceData {
-  weightKg: number;
-  heightCm: number;
-  bodyFatPercent: number;
-  muscleMassKg: number;
-  fatMassKg: number;
-  visceralFatLevel: number;
-  bmrKcal: number;
-  bodyWaterPercent: number;
-  metabolicAge: number;
-  lastAssessmentDate: string;
-  waistCm?: number;
-  hipCm?: number;
-  chestCm?: number;
-  armRightCm?: number;
-  thighRightCm?: number;
-  postureNotes?: string;
-}
-
 export interface Student {
   id: string;
   name: string;
@@ -135,7 +116,6 @@ export interface Student {
   goal?: Goal;
   height?: number; // cm
   weight?: number; // kg
-  bioimpedance?: BioimpedanceData;
   restrictions?: string[];
   activeWorkoutId?: string;
   createdAt?: string;

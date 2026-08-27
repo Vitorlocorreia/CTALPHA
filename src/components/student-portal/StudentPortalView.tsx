@@ -36,13 +36,12 @@ import {
   ChevronDown,
   Info,
   RotateCcw,
-  Scale,
   ClipboardList,
   HeartCrack,
   Edit3
 } from 'lucide-react';
 import { GYM_INFO } from '@/data/mockData';
-import { Goal, Biotype, WorkoutRoutine, BioimpedanceData } from '@/types';
+import { Goal, Biotype, WorkoutRoutine } from '@/types';
 import { WorkoutTrackerView } from './WorkoutTrackerView';
 import { WorkoutHubView } from './WorkoutHubView';
 
@@ -83,7 +82,7 @@ export const StudentPortalView: React.FC = () => {
 
   const queryParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
   const initialTab = (queryParams?.get('tab') as any) || 'treinos';
-  const [activeTab, setActiveTab] = useState<'treinos' | 'agenda' | 'bioimpedancia' | 'financeiro' | 'cadastro'>(initialTab);
+  const [activeTab, setActiveTab] = useState<'treinos' | 'agenda' | 'financeiro' | 'cadastro'>(initialTab);
   const currentAssessment = getLatestStudentAssessment(currentStudent.id);
   const [isClientAnamnesisModalOpen, setIsClientAnamnesisModalOpen] = useState(false);
 
@@ -339,18 +338,6 @@ export const StudentPortalView: React.FC = () => {
             </button>
 
             <button
-              onClick={() => setActiveTab('bioimpedancia')}
-              className={`px-4 py-2 rounded-xl transition-all flex items-center gap-1.5 ${
-                activeTab === 'bioimpedancia' 
-                  ? 'bg-alpha-500 text-white font-black shadow-md shadow-alpha-500/20' 
-                  : 'text-slate-300 hover:text-white hover:bg-slate-800'
-              }`}
-            >
-              <Scale className="w-3.5 h-3.5" />
-              <span>Bioimpedância & Avaliação</span>
-            </button>
-
-            <button
               onClick={() => setActiveTab('financeiro')}
               className={`px-4 py-2 rounded-xl transition-all flex items-center gap-1.5 ${
                 activeTab === 'financeiro' 
@@ -417,7 +404,6 @@ export const StudentPortalView: React.FC = () => {
         {[
           { id: 'treinos', label: 'Treinos', icon: Dumbbell },
           { id: 'agenda', label: 'Agenda', icon: Calendar },
-          { id: 'bioimpedancia', label: 'Bioimpedância', icon: Scale },
           { id: 'financeiro', label: 'Financeiro', icon: CreditCard },
           { id: 'cadastro', label: 'Cadastro', icon: User },
         ].map((t) => {
@@ -1287,102 +1273,6 @@ export const StudentPortalView: React.FC = () => {
                   </tbody>
                 </table>
               </div>
-            </div>
-
-          </div>
-        )}
-
-        {/* =========================================================================
-            TAB: MINHA AVALIAÇÃO FÍSICA & BIOIMPEDÂNCIA (PORTAL DO ALUNO)
-           ========================================================================= */}
-        {activeTab === 'bioimpedancia' && (
-          <div className="space-y-6 animate-fadeIn">
-            
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <h2 className="text-2xl font-black text-slate-900 tracking-tight uppercase">
-                  MINHA BIOIMPEDÂNCIA & COMPOSIÇÃO CORPORAL
-                </h2>
-                <p className="text-xs text-slate-500">
-                  Acompanhe a evolução do seu % de gordura, ganho de massa muscular e perímetros corporais.
-                </p>
-              </div>
-
-              <div className="text-xs text-slate-500 bg-white border border-slate-200 px-3 py-1.5 rounded-xl self-start sm:self-auto font-medium">
-                Última Avaliação: <strong className="text-slate-900">{currentStudent.bioimpedance?.lastAssessmentDate || '15/08/2026'}</strong>
-              </div>
-            </div>
-
-            {/* Grid de Cards de Destaque Bioimpedância */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-1">
-                <span className="text-[10px] font-bold uppercase text-slate-400 block">Peso Atual</span>
-                <span className="text-2xl font-black font-mono text-slate-900">
-                  {currentStudent.bioimpedance?.weightKg || currentStudent.weight || 75} <span className="text-sm font-bold text-slate-400">kg</span>
-                </span>
-                <span className="text-[10px] text-slate-500 block">Altura: {currentStudent.bioimpedance?.heightCm || currentStudent.height || 175} cm</span>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-1">
-                <span className="text-[10px] font-bold uppercase text-slate-400 block">% Gordura (BF)</span>
-                <span className="text-2xl font-black font-mono text-orange-600">
-                  {currentStudent.bioimpedance?.bodyFatPercent || 15.0}%
-                </span>
-                <span className="text-[10px] text-emerald-600 font-bold block">Gordura Visceral: Nível {currentStudent.bioimpedance?.visceralFatLevel || 4}</span>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-1">
-                <span className="text-[10px] font-bold uppercase text-slate-400 block">Massa Muscular</span>
-                <span className="text-2xl font-black font-mono text-emerald-600">
-                  {currentStudent.bioimpedance?.muscleMassKg || 38.0} <span className="text-sm font-bold text-slate-400">kg</span>
-                </span>
-                <span className="text-[10px] text-slate-500 block">Massa Gorda: {currentStudent.bioimpedance?.fatMassKg || 12.0} kg</span>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-1">
-                <span className="text-[10px] font-bold uppercase text-slate-400 block">Taxa Metabólica Basal</span>
-                <span className="text-2xl font-black font-mono text-blue-600">
-                  {currentStudent.bioimpedance?.bmrKcal || 1800} <span className="text-sm font-bold text-slate-400">kcal</span>
-                </span>
-                <span className="text-[10px] text-slate-500 block">Idade Metabólica: {currentStudent.bioimpedance?.metabolicAge || 23} anos</span>
-              </div>
-            </div>
-
-            {/* Perímetros Corporais */}
-            <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-4">
-              <h3 className="text-sm font-black text-slate-900 uppercase">
-                Perímetros e Medidas Corporais (cm)
-              </h3>
-
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs">
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-center">
-                  <span className="text-[10px] text-slate-400 block font-bold">Tórax</span>
-                  <span className="text-base font-black font-mono text-slate-900">{currentStudent.bioimpedance?.chestCm || 104} cm</span>
-                </div>
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-center">
-                  <span className="text-[10px] text-slate-400 block font-bold">Cintura</span>
-                  <span className="text-base font-black font-mono text-slate-900">{currentStudent.bioimpedance?.waistCm || 82} cm</span>
-                </div>
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-center">
-                  <span className="text-[10px] text-slate-400 block font-bold">Quadril</span>
-                  <span className="text-base font-black font-mono text-slate-900">{currentStudent.bioimpedance?.hipCm || 99} cm</span>
-                </div>
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-center">
-                  <span className="text-[10px] text-slate-400 block font-bold">Braço Direito</span>
-                  <span className="text-base font-black font-mono text-slate-900">{currentStudent.bioimpedance?.armRightCm || 39.5} cm</span>
-                </div>
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-center">
-                  <span className="text-[10px] text-slate-400 block font-bold">Coxa Direita</span>
-                  <span className="text-base font-black font-mono text-slate-900">{currentStudent.bioimpedance?.thighRightCm || 59.0} cm</span>
-                </div>
-              </div>
-
-              {currentStudent.bioimpedance?.postureNotes && (
-                <div className="p-3 bg-orange-50/60 border border-orange-200 rounded-xl text-xs text-slate-700">
-                  <strong className="text-alpha-700 block text-[11px] mb-0.5">Observação do Avaliador:</strong>
-                  {currentStudent.bioimpedance.postureNotes}
-                </div>
-              )}
             </div>
 
           </div>

@@ -170,7 +170,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             height: Number(s.height) || 175,
             weight: Number(s.weight) || 75,
             restrictions: s.restrictions || [],
-            bioimpedance: s.bioimpedance || {},
             source: s.source || 'G3 Legacy',
             createdAt: s.created_at ? new Date(s.created_at).toLocaleDateString('pt-BR') : '26/08/2026'
           }));
@@ -762,7 +761,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (updatedFields.goal) payload.goal = updatedFields.goal;
       if (updatedFields.biotype) payload.biotype = updatedFields.biotype;
       if (updatedFields.restrictions) payload.restrictions = updatedFields.restrictions;
-      if (updatedFields.bioimpedance) payload.bioimpedance = updatedFields.bioimpedance;
       if (updatedFields.paymentStatus) payload.payment_status = updatedFields.paymentStatus;
       if (updatedFields.planName) payload.plan_name = updatedFields.planName;
       if (updatedFields.planValue) payload.plan_value = updatedFields.planValue;

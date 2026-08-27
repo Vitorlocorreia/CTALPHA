@@ -613,7 +613,7 @@ export const WorkoutBuilderView: React.FC = () => {
         {/* RIGHT COLUMN (9 cols): SMART ASSESSMENT SUMMARY + MULTI-ROUTINE WORKSPACE */}
         <div className="lg:col-span-9 space-y-4">
           
-          {/* 2.1 SMART STUDENT ASSESSMENT SUMMARY BANNER (Substitui o card de bioimpedância) */}
+          {/* 2.1 SMART STUDENT ASSESSMENT SUMMARY BANNER */}
           <div className="bg-white dark:bg-[#101522] rounded-xl border border-slate-200 dark:border-slate-800 p-4 shadow-xs">
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
               
