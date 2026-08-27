@@ -11,6 +11,8 @@ import { WorkoutBuilderView } from '@/components/workouts/WorkoutBuilderView';
 import { ExerciseLibraryView } from '@/components/workouts/ExerciseLibraryView';
 import { FinancialView } from '@/components/financial/FinancialView';
 import { CommercialAIView } from '@/components/commercial/CommercialAIView';
+import { LandingPageView } from '@/components/landing/LandingPageView';
+import { CheckoutView } from '@/components/checkout/CheckoutView';
 
 // Code-Splitting: External / Secondary Views
 const WorkoutEngineView = React.lazy(() => import('@/components/workouts/WorkoutEngineView').then(m => ({ default: m.WorkoutEngineView })));
@@ -20,8 +22,6 @@ const StudentPortalView = React.lazy(() => import('@/components/student-portal/S
 const StudentLoginView = React.lazy(() => import('@/components/student-portal/StudentLoginView').then(m => ({ default: m.StudentLoginView })));
 const WorkoutTrackerView = React.lazy(() => import('@/components/student-portal/WorkoutTrackerView').then(m => ({ default: m.WorkoutTrackerView })));
 const WorkoutHubView = React.lazy(() => import('@/components/student-portal/WorkoutHubView').then(m => ({ default: m.WorkoutHubView })));
-const LandingPageView = React.lazy(() => import('@/components/landing/LandingPageView').then(m => ({ default: m.LandingPageView })));
-const CheckoutView = React.lazy(() => import('@/components/checkout/CheckoutView').then(m => ({ default: m.CheckoutView })));
 
 const PageLoader: React.FC = () => (
   <div className="flex items-center justify-center min-h-[400px] w-full">

@@ -30,7 +30,6 @@ interface MenuItem {
   id: string;
   label: string;
   icon: LucideIcon;
-  target?: string;
   badge?: string;
   badgeColor?: string;
 }
@@ -57,16 +56,14 @@ export const Sidebar: React.FC = () => {
     {
       title: 'OPERAÇÃO',
       items: [
-        { id: 'dashboard', label: 'Visão Geral', icon: LayoutDashboard },
+        { id: 'dashboard', label: 'Visão Geral & Catraca', icon: LayoutDashboard },
         { id: 'students', label: 'Alunos', icon: Users },
-        { id: 'checkins', label: 'Acessos & Catraca', icon: FileCheck, target: 'dashboard' },
       ]
     },
     {
       title: 'RELACIONAMENTO',
       items: [
-        { id: 'commercial', label: 'CRM & Pipeline', icon: Kanban },
-        { id: 'leads', label: 'Leads & Atendimento', icon: MessageSquare, target: 'commercial' },
+        { id: 'commercial', label: 'CRM & Atendimento', icon: Kanban },
       ]
     },
     {
@@ -108,6 +105,8 @@ export const Sidebar: React.FC = () => {
           title: 'RECEPÇÃO & CADASTRO',
           items: [
             { id: 'students', label: 'Alunos & Cadastros', icon: Users },
+            { id: 'dashboard', label: 'Acessos & Catraca', icon: FileCheck },
+            { id: 'financial', label: 'Caixa & Recebimento', icon: Receipt },
           ]
         }
       ];
@@ -120,6 +119,7 @@ export const Sidebar: React.FC = () => {
             { id: 'workout_builder', label: 'Construtor de Treino', icon: Layers },
             { id: 'exercise_library', label: 'Biblioteca de Exercícios', icon: Dumbbell },
             { id: 'workout_library', label: 'Biblioteca de Fichas Base', icon: BookOpen },
+            { id: 'students', label: 'Alunos Ativos', icon: Users },
           ]
         }
       ];
@@ -173,7 +173,7 @@ export const Sidebar: React.FC = () => {
               value={selectedUnit}
               onChange={(e) => setSelectedUnit(e.target.value as any)}
               aria-label="Selecionar Unidade Ativa"
-              className="w-full bg-white dark:bg-[#0D121D] border border-slate-200 dark:border-slate-700/80 text-slate-800 dark:text-slate-200 text-xs font-semibold rounded-md px-2 py-1 focus:outline-none focus:border-alpha-500"
+              className="w-full bg-white dark:bg-[#0D121D] border border-slate-200 dark:border-slate-700/80 text-slate-800 dark:text-slate-200 text-xs font-semibold rounded-md px-2 py-1 focus:outline-none focus:border-alpha-500 cursor-pointer"
             >
               <option value="todas">Consolidado (Todas)</option>
               <option value="unidade-1">Unidade 1 - Matriz</option>
@@ -192,13 +192,12 @@ export const Sidebar: React.FC = () => {
               <div className="space-y-0.5">
                 {group.items.map((item) => {
                   const Icon = item.icon;
-                  const targetId = item.target || item.id;
-                  const isActive = currentView === targetId;
+                  const isActive = currentView === item.id || (item.id === 'workout_builder' && currentView === 'workouts');
 
                   return (
                     <button
                       key={item.id}
-                      onClick={() => setCurrentView(targetId)}
+                      onClick={() => setCurrentView(item.id)}
                       className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                         isActive
                           ? 'bg-slate-900 text-white dark:bg-alpha-500 dark:text-white font-semibold shadow-xs'
@@ -233,14 +232,17 @@ export const Sidebar: React.FC = () => {
             </div>
             <div>
               <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block leading-tight">{profileInfo.name}</span>
-              <span className="text-[10px] text-slate-500 block leading-none">{profileInfo.role}</span>
+              <div className="flex items-center gap-1 mt-0.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span className="text-[9px] text-slate-500 capitalize">{profileInfo.role}</span>
+              </div>
             </div>
           </div>
 
           <button
             onClick={() => setCurrentView('login')}
-            className="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-white rounded hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
-            title="Trocar Perfil / Login"
+            className="p-1 text-slate-400 hover:text-red-500 transition-colors"
+            title="Encerrar Sessão"
           >
             <LogOut className="w-3.5 h-3.5" />
           </button>

@@ -18,6 +18,7 @@ import {
   Send,
   Building2,
   ChevronRight,
+  ChevronDown,
   CreditCard,
   QrCode,
   LogIn,
@@ -30,9 +31,51 @@ import {
   Activity,
   HeartPulse,
   Info,
-  X
+  X,
+  MessageCircle,
+  HelpCircle,
+  Bot
 } from 'lucide-react';
 import { GYM_INFO } from '@/data/mockData';
+
+interface FAQItem {
+  question: string;
+  answer: string;
+  category: 'planos' | 'modalidades' | 'horarios' | 'matricula';
+}
+
+const FAQ_DATA: FAQItem[] = [
+  {
+    category: 'planos',
+    question: 'Quais são os planos disponíveis e como funciona o pagamento?',
+    answer: 'Trabalhamos com o Plano Alpha VIP (acesso livre à Musculação, Crossfit e Lutas nas 2 unidades por R$ 139,90/mês), Plano Crossfit + Musculação (R$ 119,90/mês) e Plano Musculação Tradicional (R$ 89,90/mês). Aceitamos PIX, Cartão de Crédito e Débito Recorrente sem travar o limite do seu cartão.'
+  },
+  {
+    category: 'matricula',
+    question: 'Como funciona a primeira aula experimental gratuita?',
+    answer: 'Você pode agendar sua aula experimental grátis diretamente pelo nosso site ou WhatsApp. Não cobramos taxa de matrícula e você terá acompanhamento de um professor durante toda a sessão para conhecer a estrutura do CT.'
+  },
+  {
+    category: 'modalidades',
+    question: 'Quais modalidades o CT ALPHA oferece em Aliança/PE?',
+    answer: 'Oferecemos Musculação completa de alta performance com maquinário moderno, Box oficial de Crossfit / Treinamento Funcional e Tatame especializado com aulas de Muay Thai e Jiu-Jitsu para iniciantes e avançados.'
+  },
+  {
+    category: 'horarios',
+    question: 'Qual o horário de funcionamento das unidades?',
+    answer: 'Unidade 1 (Matriz): Segunda a Sexta das 05:00 às 22:00 e Sábados das 06:00 às 14:00. Unidade 2 (Expansão): Segunda a Sexta das 05:30 às 21:30 e Sábados das 07:00 às 12:00.'
+  },
+  {
+    category: 'planos',
+    question: 'Posso treinar nas duas unidades com a mesma matrícula?',
+    answer: 'Sim! Com o Plano Alpha VIP ou Plano Crossfit você tem livre circulação tanto na Unidade 1 (Centro) quanto na Unidade 2 (Expansão) utilizando o mesmo token ou reconhecimento biométrico.'
+  },
+  {
+    category: 'modalidades',
+    question: 'Como recebo minha ficha de treino personalizada?',
+    answer: 'Ao se matricular, nosso treinador realiza uma avaliação inicial e monta sua ficha de treino diretamente no aplicativo exclusivo do CT ALPHA, com vídeos demonstrativos de cada exercício, contagem de séries, descanso e acompanhamento de cargas.'
+  }
+];
 
 export const LandingPageView: React.FC = () => {
   const { setCurrentView, setUserRole, addLeadFromAI, showNotification } = useApp();
@@ -45,6 +88,57 @@ export const LandingPageView: React.FC = () => {
   const [leadUnit, setLeadUnit] = useState<'unidade-1' | 'unidade-2'>('unidade-1');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  // FAQ Accordion State
+  const [openFAQIndex, setOpenFAQIndex] = useState<number | null>(0);
+
+  // Floating AI Chat Assistant State
+  const [isAIChatOpen, setIsAIChatOpen] = useState(false);
+  const [chatMessages, setChatMessages] = useState<{ sender: 'bot' | 'user'; text: string; time: string }[]>([
+    {
+      sender: 'bot',
+      text: 'Olá! Sou a assistente virtual da CT ALPHA Hub. Como posso te ajudar hoje? Você pode tirar dúvidas sobre nossos planos, horários ou agendar uma aula grátis!',
+      time: 'Agora'
+    }
+  ]);
+  const [userInput, setUserInput] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+
+  const handleSendChatMessage = (textToSend?: string) => {
+    const query = textToSend || userInput;
+    if (!query.trim()) return;
+
+    const newMsg = { sender: 'user' as const, text: query, time: 'Agora' };
+    setChatMessages(prev => [...prev, newMsg]);
+    if (!textToSend) setUserInput('');
+    setIsTyping(true);
+
+    setTimeout(() => {
+      setIsTyping(false);
+      let responseText = '';
+      const lower = query.toLowerCase();
+
+      if (lower.includes('plano') || lower.includes('valor') || lower.includes('preço') || lower.includes('quanto custa')) {
+        responseText = 'Nossos planos começam em R$ 89,90/mês (Musculação). O Plano Alpha VIP custa R$ 139,90/mês e inclui Musculação, Crossfit e Lutas nas 2 unidades de Aliança/PE, sem taxa de adesão!';
+      } else if (lower.includes('aula') || lower.includes('gratis') || lower.includes('experimental') || lower.includes('grátis') || lower.includes('agendar')) {
+        responseText = 'Você pode fazer uma aula experimental gratuita sem compromisso! Basta clicar no botão "Agendar Aula Grátis" ou me enviar seu nome e telefone por aqui.';
+      } else if (lower.includes('horario') || lower.includes('horário') || lower.includes('abre') || lower.includes('fecha')) {
+        responseText = 'A Unidade 1 (Centro) abre de Seg a Sex das 05:00 às 22:00 e Sábado das 06:00 às 14:00. A Unidade 2 abre das 05:30 às 21:30!';
+      } else if (lower.includes('onde') || lower.includes('endereco') || lower.includes('endereço') || lower.includes('local')) {
+        responseText = 'Ficamos em Aliança/PE! Unidade 1: Rua Marechal Deodoro da Fonseca, 150 (Centro). Unidade 2: Av. Gen. Antônio Coelho, 420.';
+      } else if (lower.includes('luta') || lower.includes('muay thai') || lower.includes('jiu') || lower.includes('crossfit')) {
+        responseText = 'Temos turmas diárias de Muay Thai, Jiu-Jitsu e Box de Crossfit com professores dedicados tanto para iniciantes quanto atletas!';
+      } else {
+        responseText = 'Temos planos a partir de R$ 89,90, 2 unidades em Aliança/PE e aulas de Musculação, Crossfit e Lutas. Quer que eu agende sua aula experimental gratuita com a nossa recepção?';
+      }
+
+      setChatMessages(prev => [...prev, {
+        sender: 'bot',
+        text: responseText,
+        time: 'Agora'
+      }]);
+    }, 700);
+  };
 
   const handleSubmitLead = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,7 +163,7 @@ export const LandingPageView: React.FC = () => {
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-alpha-500 selection:text-white">
       
-      {/* 1. Top Navbar (Clean Smart Fit Style) */}
+      {/* 1. Top Navbar (Clean Style) */}
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 sm:px-10 py-3 flex items-center justify-between shadow-xs">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-slate-900 p-1.5 flex items-center justify-center shadow-xs">
@@ -88,486 +182,341 @@ export const LandingPageView: React.FC = () => {
           <a href="#unidades" className="hover:text-alpha-500 transition-colors">Unidades</a>
           <a href="#planos" className="hover:text-alpha-500 transition-colors">Planos & Preços</a>
           <a href="#experiencia" className="hover:text-alpha-500 transition-colors">Aulas & Treinos</a>
+          <a href="#faq" className="hover:text-alpha-500 transition-colors">Dúvidas Frequentes</a>
           <button 
             onClick={() => setCurrentView('student_login')} 
             className="hover:text-alpha-500 transition-colors font-bold text-xs"
           >
             Espaço do Aluno
           </button>
-          <a 
-            href="https://www.instagram.com/academiactalpha" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-slate-600 hover:text-pink-600 transition-colors"
-          >
-            <Instagram className="w-3.5 h-3.5" />
-            <span>@academiactalpha</span>
-          </a>
         </nav>
 
-        {/* CTAs */}
-        <div className="flex items-center gap-2.5">
+        {/* CTA Buttons */}
+        <div className="flex items-center gap-3">
           <button
-            onClick={() => setCurrentView('student_login')}
-            className="text-xs font-bold text-slate-700 hover:text-alpha-600 border border-slate-300 hover:border-alpha-500 px-4 py-2 rounded-full transition-all flex items-center gap-1.5 bg-white shadow-xs"
+            onClick={() => setCurrentView('login')}
+            className="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-all"
           >
-            <User className="w-3.5 h-3.5 text-slate-600" />
-            <span>Já sou aluno</span>
+            <LogIn className="w-3.5 h-3.5" />
+            Acesso Gestor
           </button>
 
           <button
-            onClick={() => setCurrentView('checkout')}
-            className="bg-alpha-500 hover:bg-alpha-600 text-white text-xs font-extrabold uppercase px-5 py-2.5 rounded-full transition-all shadow-md hover:shadow-alpha-500/25 tracking-wider"
+            onClick={() => setIsModalOpen(true)}
+            className="bg-alpha-500 hover:bg-alpha-600 text-white font-extrabold text-xs px-5 py-2.5 rounded-full uppercase tracking-wider transition-all shadow-sm hover:shadow-alpha-500/20 active:scale-95"
           >
-            Matricule-se Já
-          </button>
-
-          <button
-            onClick={() => {
-              setUserRole('gestor');
-              setCurrentView('dashboard');
-            }}
-            className="p-2 rounded-full border border-slate-300 text-slate-700 hover:bg-slate-100 transition-colors"
-            title="Acessar Sistema de Gestão / ERP"
-          >
-            <LogIn className="w-4 h-4" />
+            Agendar Aula Grátis
           </button>
         </div>
       </header>
 
-      {/* 2. Hero Big Promo Banner (Card Arredondado 80/20 com Fundo Branco Visível) */}
-      <section className="px-4 sm:px-8 lg:px-12 pt-4 pb-8 max-w-[1400px] mx-auto">
-        <div className="relative rounded-3xl sm:rounded-[32px] overflow-hidden shadow-2xl border border-slate-200/80 min-h-[500px] sm:min-h-[580px] lg:min-h-[620px] flex items-center">
-          <img
-            src="/promo_hero.jpg"
-            alt="Centro de Treinamento CT ALPHA"
-            className="absolute inset-0 w-full h-full object-cover object-center transform scale-100 hover:scale-[1.01] transition-transform duration-1000"
-          />
-          {/* Subtle dynamic gradient to highlight text while keeping gym photo clear */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/45 to-black/10"></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20"></div>
-
-          {/* Banner Promo Content */}
-          <div className="relative z-10 p-6 sm:p-12 lg:p-14 max-w-2xl text-white space-y-4 sm:space-y-6">
-            <div className="inline-flex items-center gap-2 bg-alpha-500 text-white font-black text-xs uppercase px-4 py-1.5 rounded-full tracking-wider shadow-md">
-              <Sparkles className="w-3.5 h-3.5 text-white animate-pulse" />
-              <span>O Maior Centro de Treinamento da Região</span>
+      {/* 2. Hero Section */}
+      <section className="relative overflow-hidden bg-slate-950 text-white py-16 sm:py-24 px-4 sm:px-10">
+        <div className="absolute inset-0 opacity-25 bg-[radial-gradient(#FF5500_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 items-center relative z-10">
+          <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/15 px-3.5 py-1.5 rounded-full text-xs font-bold text-alpha-400 backdrop-blur-md">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>O Maior e Mais Completo CT de Aliança - PE</span>
             </div>
 
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black uppercase tracking-tight font-sans leading-[0.95] drop-shadow-2xl">
-              TRANSFORME <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-alpha-400 via-orange-300 to-amber-300">
-                SEU CORPO
-              </span>
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight font-sans leading-none">
+              Transforme seu corpo no <span className="text-alpha-500">CT ALPHA</span>
             </h1>
 
-            <p className="text-sm sm:text-base text-slate-200 font-medium drop-shadow-md max-w-lg leading-relaxed">
-              Musculação de alta performance, Box de Crossfit oficial e Tatame de Lutas. Treine em 2 unidades completas em Aliança/PE com acompanhamento de treinador e treinos personalizados.
+            <p className="text-slate-300 text-sm sm:text-base max-w-xl font-normal leading-relaxed">
+              Musculação de alta performance, Box oficial de Crossfit e Tatame de Lutas. Duas unidades modernas em Aliança com equipamentos de ponta e professores qualificados.
             </p>
 
-            {/* Quick feature tags */}
-            <div className="flex flex-wrap items-center gap-2 text-xs font-bold text-slate-200">
-              <span className="bg-black/60 backdrop-blur-md px-3 py-1 rounded-lg border border-white/20">✓ 2 Unidades em Aliança</span>
-              <span className="bg-black/60 backdrop-blur-md px-3 py-1 rounded-lg border border-white/20">✓ Ficha Digital no App</span>
-              <span className="bg-black/60 backdrop-blur-md px-3 py-1 rounded-lg border border-white/20">✓ Aulas Coletivas Inclusas</span>
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 pt-2">
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="w-full sm:w-auto bg-alpha-500 hover:bg-alpha-600 text-white font-black text-sm px-8 py-4 rounded-full uppercase tracking-wider transition-all shadow-lg hover:shadow-alpha-500/30 flex items-center justify-center gap-2"
+              >
+                <span>Garantir Aula Experimental</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+
+              <a
+                href="#planos"
+                className="w-full sm:w-auto bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-sm px-6 py-4 rounded-full transition-all text-center"
+              >
+                Ver Planos a partir de R$ 89,90
+              </a>
             </div>
 
-            <div className="pt-2 flex flex-wrap items-center gap-3.5">
-              <button
-                onClick={() => setCurrentView('checkout')}
-                className="bg-alpha-500 hover:bg-alpha-600 text-white font-black text-xs sm:text-sm uppercase tracking-wider px-8 py-3.5 rounded-full transition-all shadow-xl shadow-alpha-500/40 hover:scale-105"
-              >
-                MATRICULE-SE JÁ
-              </button>
+            <div className="grid grid-cols-3 gap-4 pt-6 border-t border-white/10 text-center sm:text-left">
+              <div>
+                <span className="text-2xl font-black text-white block">2</span>
+                <span className="text-xs text-slate-400">Unidades em Aliança</span>
+              </div>
+              <div>
+                <span className="text-2xl font-black text-white block">3</span>
+                <span className="text-xs text-slate-400">Modalidades Integradas</span>
+              </div>
+              <div>
+                <span className="text-2xl font-black text-emerald-400 block">+400</span>
+                <span className="text-xs text-slate-400">Alunos Ativos</span>
+              </div>
+            </div>
+          </div>
 
-              <button
-                onClick={() => setCurrentView('student_login')}
-                className="bg-white/15 hover:bg-white/25 backdrop-blur-md border border-white/40 text-white font-bold text-xs sm:text-sm px-6 py-3.5 rounded-full transition-all flex items-center gap-2 hover:border-white"
-              >
-                <User className="w-4 h-4 text-alpha-400" />
-                <span>Espaço do Aluno</span>
-              </button>
-
-              <span className="text-xs font-extrabold text-amber-300 uppercase tracking-widest bg-black/50 px-3 py-1.5 rounded-md border border-amber-300/30">
-                /// Vagas Abertas
-              </span>
+          <div className="lg:col-span-5 relative">
+            <div className="rounded-3xl overflow-hidden border-2 border-white/15 shadow-2xl bg-slate-900 aspect-4/3 relative">
+              <img 
+                src="/facade.jpg" 
+                alt="Fachada CT ALPHA" 
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+              <div className="absolute bottom-4 left-4 right-4 p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 text-xs text-white">
+                <span className="font-black uppercase text-alpha-400 block">Unidade 1 • Matriz</span>
+                <span className="text-slate-200">Rua Marechal Deodoro da Fonseca, 150 • Centro</span>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 3. Encontre a academia mais próxima (Smart Fit Unit Finder) */}
-      <section id="unidades" className="py-8 px-4 sm:px-10 max-w-7xl mx-auto space-y-4">
-        <div className="text-center">
-          <h3 className="text-xl sm:text-2xl font-black text-slate-900 uppercase">
-            Encontre a academia <span className="text-alpha-500">mais próxima</span>
-          </h3>
+      {/* 3. Section: Modalidades */}
+      <section id="experiencia" className="py-16 px-4 sm:px-10 max-w-6xl mx-auto space-y-10">
+        <div className="text-center space-y-2">
+          <span className="text-xs font-black text-alpha-500 uppercase tracking-widest">Modalidades Oficiais</span>
+          <h2 className="text-2xl sm:text-4xl font-black uppercase text-slate-900">
+            Tudo o que você precisa em um só lugar
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-500 max-w-xl mx-auto">
+            Treine musculação, crossfit e lutas com estrutura profissional e metodologia comprovada.
+          </p>
         </div>
 
-        <div className="relative rounded-2xl overflow-hidden shadow-lg border border-slate-200 max-w-4xl mx-auto aspect-[16/7] flex items-center justify-center">
-          <img
-            src="/facade.jpg"
-            alt="Fachada CT ALPHA"
-            className="absolute inset-0 w-full h-full object-cover object-center brightness-[0.8]"
-          />
-          <div className="absolute inset-0 bg-black/40"></div>
-
-          {/* Search Card Overlay */}
-          <div className="relative z-10 bg-white/95 backdrop-blur-md p-4 sm:p-6 rounded-2xl shadow-2xl max-w-md w-full mx-4 space-y-3 text-center border border-white/40">
-            <div className="flex items-center gap-2 text-xs font-black uppercase text-slate-900 justify-center">
-              <Building2 className="w-4 h-4 text-alpha-500" />
-              <span>Unidades CT ALPHA em Aliança/PE</span>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="p-6 rounded-3xl border border-slate-200 bg-slate-50/50 hover:border-alpha-500 transition-all space-y-4 shadow-xs">
+            <div className="w-12 h-12 rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center">
+              <Dumbbell className="w-6 h-6" />
             </div>
-
-            <div className="grid grid-cols-2 gap-2 text-xs font-bold">
-              <button
-                onClick={() => setSelectedUnitFilter('unidade-1')}
-                className={`py-2 px-3 rounded-xl border transition-all ${
-                  selectedUnitFilter === 'unidade-1'
-                    ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
-                    : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
-                }`}
-              >
-                Matriz (Centro)
-              </button>
-              <button
-                onClick={() => setSelectedUnitFilter('unidade-2')}
-                className={`py-2 px-3 rounded-xl border transition-all ${
-                  selectedUnitFilter === 'unidade-2'
-                    ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
-                    : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
-                }`}
-              >
-                Unidade 2 (Expansão)
-              </button>
-            </div>
-
-            <p className="text-[11px] text-slate-600">
-              {selectedUnitFilter === 'unidade-1' 
-                ? 'Rua Marechal Deodoro da Fonseca, 150 • Abre às 05:00'
-                : 'Av. Gen. Antônio Coelho, 420 • Abre às 05:30'}
+            <h3 className="text-lg font-black uppercase text-slate-900">Musculação de Alta Performance</h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Equipamentos biomecanicamente calibrados, área ampla de pesos livres, halteres até 40kg e fichas digitais no aplicativo.
             </p>
+            <ul className="text-xs text-slate-600 space-y-1.5 font-medium">
+              <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-emerald-600" /> Acompanhamento de instrutores</li>
+              <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-emerald-600" /> Treinos adaptados para qualquer objetivo</li>
+            </ul>
+          </div>
 
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="w-full bg-alpha-500 hover:bg-alpha-600 text-white text-xs font-bold uppercase py-2.5 rounded-xl transition-colors shadow-xs"
-            >
-              Ver Detalhes da Unidade
-            </button>
+          <div className="p-6 rounded-3xl border border-slate-200 bg-slate-50/50 hover:border-alpha-500 transition-all space-y-4 shadow-xs">
+            <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center">
+              <Flame className="w-6 h-6" />
+            </div>
+            <h3 className="text-lg font-black uppercase text-slate-900">Box de Crossfit & Funcional</h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Treinos intensos em grupo com cordas, pneus, kettlebells, barras olímpicas e remos para queima calórica extrema.
+            </p>
+            <ul className="text-xs text-slate-600 space-y-1.5 font-medium">
+              <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-emerald-600" /> WODs diários dinâmicos</li>
+              <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-emerald-600" /> Comunidade motivadora e acolhedora</li>
+            </ul>
+          </div>
+
+          <div className="p-6 rounded-3xl border border-slate-200 bg-slate-50/50 hover:border-alpha-500 transition-all space-y-4 shadow-xs">
+            <div className="w-12 h-12 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center">
+              <Swords className="w-6 h-6" />
+            </div>
+            <h3 className="text-lg font-black uppercase text-slate-900">Tatame: Muay Thai & Jiu-Jitsu</h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Aprenda defesa pessoal, ganhe disciplina e queime calorias com nossos mestres graduados em tatame de alta densidade.
+            </p>
+            <ul className="text-xs text-slate-600 space-y-1.5 font-medium">
+              <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-emerald-600" /> Turmas femininas e masculinas</li>
+              <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-emerald-600" /> Do básico ao avançado</li>
+            </ul>
           </div>
         </div>
       </section>
 
-      {/* 4. Planos & Preços (Exact Smart Fit 3-Column Plan Cards) */}
-      <section id="planos" className="py-14 px-4 sm:px-10 bg-slate-50 border-t border-slate-200">
-        <div className="max-w-6xl mx-auto space-y-8">
-          
-          <div className="text-center space-y-1">
-            <h3 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight">
-              Venha treinar no <span className="text-alpha-500">maior centro de treinamento</span> de Pernambuco
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-500 font-medium">
-              Os melhores planos com livre acesso e sem comprometer o limite do seu cartão.
+      {/* 4. Section: Planos & Preços */}
+      <section id="planos" className="py-16 px-4 sm:px-10 bg-slate-50 border-y border-slate-200">
+        <div className="max-w-6xl mx-auto space-y-10">
+          <div className="text-center space-y-2">
+            <span className="text-xs font-black text-alpha-500 uppercase tracking-widest">Planos Flexíveis</span>
+            <h2 className="text-2xl sm:text-4xl font-black uppercase text-slate-900">
+              Escolha o plano ideal para sua rotina
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-500 max-w-xl mx-auto">
+              Sem fidelidade abusiva, sem taxa surpresa. Cancele quando quiser no débito recorrente.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
-            
-            {/* Card 1: Plano Alpha VIP (Center Highlight - Black Card) */}
-            <div className="rounded-3xl bg-[#111622] text-white p-7 flex flex-col justify-between space-y-6 shadow-2xl relative border-2 border-alpha-500 order-first md:order-none">
-              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-alpha-500 text-white font-black text-[10px] uppercase tracking-wider px-4 py-1 rounded-full shadow-md">
-                O Mais Completo
-              </div>
-
-              <div>
-                <span className="text-xs font-bold text-alpha-400 uppercase tracking-wider">Livre Acesso Total</span>
-                <h4 className="text-2xl font-black uppercase text-white mt-1">Plano Alpha VIP</h4>
-                <p className="text-xs text-slate-400 mt-1">
-                  Treine Musculação, Box de Crossfit e Tatame de Lutas nas 2 unidades.
-                </p>
-
-                <div className="mt-6 pt-4 border-t border-slate-800">
-                  <span className="text-xs text-slate-400 block">Mensalidade Recorrente</span>
-                  <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-4xl font-black text-white">R$ 149,90</span>
-                    <span className="text-xs text-slate-400">/ mês</span>
-                  </div>
-                  <span className="text-[11px] text-emerald-400 font-bold block mt-1">✓ Sem taxa de anuidade</span>
+            {/* Plano Básico */}
+            <div className="p-7 rounded-3xl bg-white border border-slate-200 shadow-xs flex flex-col justify-between space-y-6">
+              <div className="space-y-3">
+                <span className="text-xs font-bold text-slate-500 uppercase">Tradicional</span>
+                <h3 className="text-xl font-black text-slate-900">Musculação</h3>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-black text-slate-900">R$ 89,90</span>
+                  <span className="text-xs text-slate-500">/mês</span>
                 </div>
-
-                <ul className="space-y-2.5 text-xs text-slate-300 pt-6 mt-6 border-t border-slate-800">
-                  <li className="flex items-center gap-2.5">
-                    <Check className="w-4 h-4 text-alpha-500 shrink-0" />
-                    <span><strong>Livre acesso</strong> a Musculação + Crossfit + Lutas</span>
-                  </li>
-                  <li className="flex items-center gap-2.5">
-                    <Check className="w-4 h-4 text-alpha-500 shrink-0" />
-                    <span>Acesso a todas as <strong>2 unidades</strong> em Aliança</span>
-                  </li>
-                  <li className="flex items-center gap-2.5">
-                    <Check className="w-4 h-4 text-alpha-500 shrink-0" />
-                    <span>Sem fidelidade presa no limite do cartão</span>
-                  </li>
-                  <li className="flex items-center gap-2.5">
-                    <Check className="w-4 h-4 text-alpha-500 shrink-0" />
-                    <span>Ficha técnica no <strong>App CT Alpha</strong> inclusa</span>
-                  </li>
-                </ul>
+                <p className="text-xs text-slate-500">Acesso ilimitado ao salão de musculação em 1 unidade.</p>
+                <div className="pt-4 border-t border-slate-100 space-y-2 text-xs text-slate-700">
+                  <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-600" /> Musculação livre todos os dias</div>
+                  <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-600" /> Ficha de treino no celular</div>
+                  <div className="flex items-center gap-2 text-slate-400"><X className="w-3.5 h-3.5" /> Sem Crossfit e Lutas</div>
+                </div>
               </div>
-
               <button
-                onClick={() => setCurrentView('checkout')}
-                className="w-full bg-alpha-500 hover:bg-alpha-600 text-white font-black text-xs uppercase tracking-wider py-3.5 rounded-full transition-all shadow-lg hover:shadow-alpha-500/30 text-center"
+                onClick={() => {
+                  setLeadInterest('musculacao');
+                  setIsModalOpen(true);
+                }}
+                className="w-full bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold text-xs py-3 rounded-full uppercase transition-all"
               >
-                Contratar Agora
+                Escolher Musculação
               </button>
             </div>
 
-            {/* Card 2: Crossfit + Musculação */}
-            <div className="rounded-3xl bg-white text-slate-900 p-7 flex flex-col justify-between space-y-6 shadow-md border border-slate-200">
-              <div>
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Crossfit & Funcional</span>
-                <h4 className="text-2xl font-black uppercase text-slate-900 mt-1">Cross + Musculação</h4>
-                <p className="text-xs text-slate-500 mt-1">
-                  Ideal para quem busca condicionamento de alto impacto e força.
-                </p>
-
-                <div className="mt-6 pt-4 border-t border-slate-100">
-                  <span className="text-xs text-slate-500 block">Mensalidade</span>
-                  <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-3xl font-black text-slate-900">R$ 129,90</span>
-                    <span className="text-xs text-slate-500">/ mês</span>
-                  </div>
-                  <span className="text-[11px] text-slate-500 block mt-1">Débito automático ou PIX</span>
-                </div>
-
-                <ul className="space-y-2.5 text-xs text-slate-600 pt-6 mt-6 border-t border-slate-100">
-                  <li className="flex items-center gap-2.5">
-                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>Acesso ao <strong>Box de Crossfit</strong> oficial</span>
-                  </li>
-                  <li className="flex items-center gap-2.5">
-                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>Acesso completo à área de Musculação</span>
-                  </li>
-                  <li className="flex items-center gap-2.5">
-                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>Agendamento de WODs no aplicativo</span>
-                  </li>
-                </ul>
+            {/* Plano VIP - Destaque */}
+            <div className="p-7 rounded-3xl bg-slate-900 text-white border-2 border-alpha-500 shadow-xl flex flex-col justify-between space-y-6 relative">
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-alpha-500 text-white text-[10px] font-black uppercase tracking-wider px-3.5 py-1 rounded-full shadow-md">
+                Mais Escolhido • Acesso Total
               </div>
 
+              <div className="space-y-3">
+                <span className="text-xs font-bold text-alpha-400 uppercase">Livre Total</span>
+                <h3 className="text-xl font-black text-white">Alpha VIP Completo</h3>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-black text-white">R$ 139,90</span>
+                  <span className="text-xs text-slate-400">/mês</span>
+                </div>
+                <p className="text-xs text-slate-300">Acesso ilimitado a todas as modalidades e unidades.</p>
+                <div className="pt-4 border-t border-slate-800 space-y-2 text-xs text-slate-200">
+                  <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-400" /> Musculação + Crossfit + Lutas</div>
+                  <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-400" /> Livre acesso na Unidade 1 e Unidade 2</div>
+                  <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-400" /> Anamnese & Ficha no App</div>
+                  <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-400" /> Sem taxa de matrícula</div>
+                </div>
+              </div>
               <button
-                onClick={() => setCurrentView('checkout')}
-                className="w-full bg-slate-900 hover:bg-slate-800 text-white font-black text-xs uppercase tracking-wider py-3.5 rounded-full transition-all text-center"
+                onClick={() => {
+                  setLeadInterest('completo');
+                  setIsModalOpen(true);
+                }}
+                className="w-full bg-alpha-500 hover:bg-alpha-600 text-white font-black text-xs py-3 rounded-full uppercase tracking-wider transition-all shadow-md"
               >
-                Contratar Agora
+                Garantir Plano VIP
               </button>
             </div>
 
-            {/* Card 3: Musculação Prime */}
-            <div className="rounded-3xl bg-white text-slate-900 p-7 flex flex-col justify-between space-y-6 shadow-md border border-slate-200">
-              <div>
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Essencial</span>
-                <h4 className="text-2xl font-black uppercase text-slate-900 mt-1">Musculação Prime</h4>
-                <p className="text-xs text-slate-500 mt-1">
-                  Treino de musculação de alta performance das 05h às 22h.
-                </p>
-
-                <div className="mt-6 pt-4 border-t border-slate-100">
-                  <span className="text-xs text-slate-500 block">Mensalidade</span>
-                  <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-3xl font-black text-slate-900">R$ 99,90</span>
-                    <span className="text-xs text-slate-500">/ mês</span>
-                  </div>
-                  <span className="text-[11px] text-slate-500 block mt-1">Débito automático ou PIX</span>
+            {/* Plano Crossfit */}
+            <div className="p-7 rounded-3xl bg-white border border-slate-200 shadow-xs flex flex-col justify-between space-y-6">
+              <div className="space-y-3">
+                <span className="text-xs font-bold text-slate-500 uppercase">Potência</span>
+                <h3 className="text-xl font-black text-slate-900">Crossfit + Musculação</h3>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-black text-slate-900">R$ 119,90</span>
+                  <span className="text-xs text-slate-500">/mês</span>
                 </div>
-
-                <ul className="space-y-2.5 text-xs text-slate-600 pt-6 mt-6 border-t border-slate-100">
-                  <li className="flex items-center gap-2.5">
-                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>Maquinário biomecânico completo</span>
-                  </li>
-                  <li className="flex items-center gap-2.5">
-                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>Ficha de treino digital no App</span>
-                  </li>
-                  <li className="flex items-center gap-2.5">
-                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>Acompanhamento com treinador</span>
-                  </li>
-                </ul>
+                <p className="text-xs text-slate-500">Aulas diárias de Box Crossfit + Musculação inclusa.</p>
+                <div className="pt-4 border-t border-slate-100 space-y-2 text-xs text-slate-700">
+                  <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-600" /> WODs de Crossfit todos os dias</div>
+                  <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-600" /> Musculação completa liberada</div>
+                  <div className="flex items-center gap-2 text-slate-400"><X className="w-3.5 h-3.5" /> Sem aulas de Tatame</div>
+                </div>
               </div>
-
               <button
-                onClick={() => setCurrentView('checkout')}
-                className="w-full bg-slate-900 hover:bg-slate-800 text-white font-black text-xs uppercase tracking-wider py-3.5 rounded-full transition-all text-center"
+                onClick={() => {
+                  setLeadInterest('crossfit');
+                  setIsModalOpen(true);
+                }}
+                className="w-full bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold text-xs py-3 rounded-full uppercase transition-all"
               >
-                Contratar Agora
+                Escolher Crossfit
               </button>
             </div>
-
           </div>
         </div>
       </section>
 
-      {/* 5. Experiência CT ALPHA (3 Photo Highlights) */}
-      <section id="experiencia" className="py-14 px-4 sm:px-10 max-w-6xl mx-auto space-y-8">
-        <div className="text-center space-y-1">
-          <h3 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight">
-            Experiência <span className="text-alpha-500">CT ALPHA</span>
-          </h3>
-          <p className="text-xs sm:text-sm text-slate-500">Ambiente de treinamento projetado para resultados reais.</p>
+      {/* 5. Section: FAQ & Dúvidas Frequentes (NOVO) */}
+      <section id="faq" className="py-16 px-4 sm:px-10 max-w-4xl mx-auto space-y-10">
+        <div className="text-center space-y-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-alpha-500/10 text-alpha-600 text-xs font-bold border border-alpha-500/20">
+            <HelpCircle className="w-3.5 h-3.5" />
+            <span>Tire Suas Dúvidas</span>
+          </div>
+          <h2 className="text-2xl sm:text-4xl font-black uppercase text-slate-900">
+            Perguntas Frequentes (FAQ)
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto">
+            Confira as principais dúvidas sobre matrículas, horários e funcionamento da CT ALPHA.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm space-y-3 group bg-white p-3">
-            <div className="h-44 rounded-xl overflow-hidden">
-              <img src="/hero_bg.jpg" alt="Equipamentos" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+        <div className="space-y-3">
+          {FAQ_DATA.map((item, index) => {
+            const isOpen = openFAQIndex === index;
+
+            return (
+              <div
+                key={index}
+                className="rounded-2xl border border-slate-200 bg-white overflow-hidden transition-all shadow-xs"
+              >
+                <button
+                  onClick={() => setOpenFAQIndex(isOpen ? null : index)}
+                  className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-3 hover:bg-slate-50 transition-colors"
+                >
+                  <span className="text-xs sm:text-sm font-bold text-slate-900 leading-snug">
+                    {item.question}
+                  </span>
+                  <div className={`p-1 rounded-full transition-transform duration-200 ${isOpen ? 'bg-alpha-500 text-white rotate-180' : 'bg-slate-100 text-slate-500'}`}>
+                    <ChevronDown className="w-4 h-4" />
+                  </div>
+                </button>
+
+                {isOpen && (
+                  <div className="px-4 sm:px-5 pb-5 pt-1 text-xs sm:text-sm text-slate-600 border-t border-slate-100 bg-slate-50/50 leading-relaxed">
+                    {item.answer}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* FAQ Assistance CTA Box */}
+        <div className="p-6 rounded-3xl bg-slate-900 text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg">
+          <div className="flex items-center gap-3.5 text-center sm:text-left">
+            <div className="w-12 h-12 rounded-2xl bg-alpha-500 flex items-center justify-center shrink-0">
+              <Bot className="w-6 h-6 text-white" />
             </div>
-            <h4 className="text-sm font-black text-slate-900 uppercase">Equipamentos de Ponta</h4>
-            <p className="text-xs text-slate-500">Biometria, anilhas olímpicas e maquinário moderno.</p>
+            <div>
+              <h4 className="text-sm font-bold text-white">Não encontrou o que procurava?</h4>
+              <p className="text-xs text-slate-300">Converse agora mesmo com nossa Assistente Virtual ou no WhatsApp.</p>
+            </div>
           </div>
 
-          <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm space-y-3 group bg-white p-3">
-            <div className="h-44 rounded-xl overflow-hidden">
-              <img src="/promo_hero.jpg" alt="Crossfit" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-            </div>
-            <h4 className="text-sm font-black text-slate-900 uppercase">Box de Crossfit Integrado</h4>
-            <p className="text-xs text-slate-500">Estrutura de rig e comunidade ativa em Aliança.</p>
-          </div>
-
-          <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm space-y-3 group bg-white p-3">
-            <div className="h-44 rounded-xl overflow-hidden">
-              <img src="/combat_bg.jpg" alt="Tatame Lutas" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-            </div>
-            <h4 className="text-sm font-black text-slate-900 uppercase">Tatame de Lutas Oficial</h4>
-            <p className="text-xs text-slate-500">Muay Thai e Jiu-Jitsu com mestres graduados.</p>
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <button
+              onClick={() => setIsAIChatOpen(true)}
+              className="flex-1 sm:flex-initial px-4 py-2.5 bg-alpha-500 hover:bg-alpha-600 text-white text-xs font-bold rounded-xl transition-all shadow-xs"
+            >
+              Falar com a IA
+            </button>
+            <a
+              href="https://wa.me/5581998929667?text=Ol%C3%A1%2C%20gostaria%20de%20tirar%20uma%20d%C3%BAvida%20sobre%20o%20CT%20ALPHA!"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 sm:flex-initial px-4 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold rounded-xl text-center transition-all"
+            >
+              WhatsApp
+            </a>
           </div>
         </div>
       </section>
 
-      {/* 6. Aulas e Treinos Exclusivos */}
-      <section className="py-14 px-4 sm:px-10 bg-slate-50 border-t border-slate-200">
-        <div className="max-w-6xl mx-auto space-y-8">
-          <div className="text-center space-y-1">
-            <h3 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight">
-              Aulas e treinos <span className="text-alpha-500">exclusivos</span>
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-500">Turmas dinâmicas guiadas por especialistas credenciados.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            
-            <div className="rounded-2xl bg-white border border-slate-200 p-6 space-y-4 shadow-sm text-center">
-              <span className="text-[10px] font-black uppercase tracking-wider bg-orange-100 text-alpha-600 px-3 py-1 rounded-full">
-                Alta Intensidade
-              </span>
-              <h4 className="text-base font-black text-slate-900 uppercase">Crossfit WOD</h4>
-              <div className="flex justify-center gap-6 text-xs text-slate-600 font-bold">
-                <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-alpha-500" /> 60 min</span>
-                <span className="flex items-center gap-1"><Flame className="w-3.5 h-3.5 text-alpha-500" /> Até 800 kcal</span>
-              </div>
-              <p className="text-xs text-slate-500">Treino funcional com barras, cordas e agachamentos em grupo.</p>
-            </div>
-
-            <div className="rounded-2xl bg-white border border-slate-200 p-6 space-y-4 shadow-sm text-center">
-              <span className="text-[10px] font-black uppercase tracking-wider bg-orange-100 text-alpha-600 px-3 py-1 rounded-full">
-                Combate & Defesa
-              </span>
-              <h4 className="text-base font-black text-slate-900 uppercase">Muay Thai & Jiu-Jitsu</h4>
-              <div className="flex justify-center gap-6 text-xs text-slate-600 font-bold">
-                <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-alpha-500" /> 75 min</span>
-                <span className="flex items-center gap-1"><Flame className="w-3.5 h-3.5 text-alpha-500" /> Até 900 kcal</span>
-              </div>
-              <p className="text-xs text-slate-500">Técnicas de combate, postura e queima calórica intensa no tatame.</p>
-            </div>
-
-            <div className="rounded-2xl bg-white border border-slate-200 p-6 space-y-4 shadow-sm text-center">
-              <span className="text-[10px] font-black uppercase tracking-wider bg-orange-100 text-alpha-600 px-3 py-1 rounded-full">
-                Hipertrofia & Força
-              </span>
-              <h4 className="text-base font-black text-slate-900 uppercase">Musculação Guiada</h4>
-              <div className="flex justify-center gap-6 text-xs text-slate-600 font-bold">
-                <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-alpha-500" /> 50 min</span>
-                <span className="flex items-center gap-1"><Activity className="w-3.5 h-3.5 text-alpha-500" /> Foco Muscular</span>
-              </div>
-              <p className="text-xs text-slate-500">Periodizações divididas em ABC/ABCD adaptadas para seus objetivos.</p>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* 7. CT ALPHA App Showcase Banner (Smart Fit App Banner Style) */}
-      <section id="app" className="py-12 px-4 sm:px-10 max-w-6xl mx-auto">
-        <div className="rounded-3xl bg-gradient-to-r from-amber-100 via-orange-100 to-amber-50 border border-orange-200 p-6 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-8 shadow-md">
-          <div className="space-y-3 max-w-lg">
-            <span className="text-xs font-black uppercase tracking-wider text-alpha-600">Tecnologia Exclusiva</span>
-            <h3 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase leading-tight">
-              CT ALPHA App: <br />Seu aliado nos treinos!
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
-              Acesse sua ficha de treino montada pelo treinador, faça check-in digital por QR Code na recepção e agende suas aulas de Crossfit direto pelo smartphone.
-            </p>
-
-            <div className="pt-2 flex items-center gap-4">
-              <div className="w-20 h-20 bg-white rounded-xl p-2 shadow-xs flex items-center justify-center border border-orange-200">
-                <QrCode className="w-full h-full text-slate-900" />
-              </div>
-              <div className="text-xs font-bold text-slate-800 space-y-1">
-                <p>✓ Disponível para Android e iOS</p>
-                <p>✓ Acesso incluso em todos os planos</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="w-full max-w-sm rounded-2xl overflow-hidden shadow-lg border border-orange-300">
-            <img src="/app_banner.jpg" alt="CT ALPHA App Mockup" className="w-full h-auto object-cover" />
-          </div>
-        </div>
-      </section>
-
-      {/* 8. Serviços Adicionais */}
-      <section className="py-14 px-4 sm:px-10 max-w-6xl mx-auto space-y-8">
-        <div className="text-center space-y-1">
-          <h3 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight">
-            Conheça nossos <span className="text-alpha-500">serviços adicionais</span>
-          </h3>
-          <p className="text-xs sm:text-sm text-slate-500">Potencialize seus resultados com nossos acompanhamentos.</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          <div className="p-6 rounded-2xl border border-slate-200 bg-white shadow-xs space-y-3">
-            <span className="text-xs font-black text-alpha-500 uppercase">CT Alpha Body</span>
-            <h4 className="text-base font-bold text-slate-900">Bioimpedância & Avaliação Física</h4>
-            <p className="text-xs text-slate-500">Mapeamento preciso de massa magra, % de gordura e hidratação.</p>
-            <div className="pt-2 border-t border-slate-100 font-bold text-sm text-slate-900">
-              R$ 49,90 <span className="text-xs text-slate-400 font-normal">/ sessão</span>
-            </div>
-          </div>
-
-          <div className="p-6 rounded-2xl border border-slate-200 bg-white shadow-xs space-y-3">
-            <span className="text-xs font-black text-alpha-500 uppercase">CT Alpha Coach</span>
-            <h4 className="text-base font-bold text-slate-900">Personal Trainer Individual</h4>
-            <p className="text-xs text-slate-500">Acompanhamento 1 a 1 para foco total em metas específicas.</p>
-            <div className="pt-2 border-t border-slate-100 font-bold text-sm text-slate-900">
-              R$ 199,90 <span className="text-xs text-slate-400 font-normal">/ mês</span>
-            </div>
-          </div>
-
-          <div className="p-6 rounded-2xl border border-slate-200 bg-white shadow-xs space-y-3">
-            <span className="text-xs font-black text-alpha-500 uppercase">CT Alpha Energy</span>
-            <h4 className="text-base font-bold text-slate-900">Bebidas & Suplementos</h4>
-            <p className="text-xs text-slate-500">Isotônicos, creatina, whey e energéticos gelados no balcão.</p>
-            <div className="pt-2 border-t border-slate-100 font-bold text-sm text-slate-900">
-              A partir de R$ 6,00
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 9. Modal de Matrícula / Aula Experimental Grátis */}
+      {/* 6. Modal de Matrícula / Aula Experimental Grátis */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="max-w-md w-full bg-white rounded-3xl p-7 shadow-2xl relative animate-scaleUp text-slate-900 border border-slate-200">
@@ -670,7 +619,121 @@ export const LandingPageView: React.FC = () => {
         </div>
       )}
 
-      {/* 10. Comprehensive Footer (Smart Fit Dark Footer Style) */}
+      {/* 7. FLOATING INTERACTIVE AI FAQ CHATBOT WIDGET (NOVO) */}
+      <div className="fixed bottom-6 right-6 z-50">
+        {!isAIChatOpen ? (
+          <button
+            onClick={() => setIsAIChatOpen(true)}
+            className="flex items-center gap-2.5 bg-slate-900 hover:bg-black text-white px-4 py-3 rounded-full shadow-2xl border border-slate-700 transition-all hover:scale-105 active:scale-95 group"
+          >
+            <div className="w-8 h-8 rounded-full bg-alpha-500 flex items-center justify-center text-white shadow-xs">
+              <Bot className="w-4 h-4 animate-bounce" />
+            </div>
+            <div className="text-left hidden sm:block">
+              <span className="text-[11px] font-bold block leading-none">Assistente FAQ</span>
+              <span className="text-[9px] text-slate-400">Tire dúvidas com IA</span>
+            </div>
+          </button>
+        ) : (
+          <div className="w-[340px] sm:w-[380px] h-[480px] bg-white rounded-3xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden animate-scaleUp text-xs">
+            {/* Chat Header */}
+            <div className="p-3.5 bg-slate-900 text-white flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-alpha-500 flex items-center justify-center text-white">
+                  <Bot className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-xs">Assistente Virtual CT ALPHA</h4>
+                  <div className="flex items-center gap-1 text-[10px] text-emerald-400">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>Online • Responde instantaneamente</span>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setIsAIChatOpen(false)}
+                className="p-1 text-slate-400 hover:text-white rounded-md"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Chat Messages Body */}
+            <div className="flex-1 p-3.5 overflow-y-auto space-y-2.5 bg-slate-50">
+              {chatMessages.map((msg, i) => (
+                <div
+                  key={i}
+                  className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div
+                    className={`max-w-[85%] p-3 rounded-2xl ${
+                      msg.sender === 'user'
+                        ? 'bg-alpha-500 text-white rounded-br-none shadow-xs'
+                        : 'bg-white text-slate-800 border border-slate-200 rounded-bl-none shadow-xs'
+                    }`}
+                  >
+                    <p className="leading-relaxed">{msg.text}</p>
+                    <span className="text-[9px] opacity-60 block mt-1 text-right">{msg.time}</span>
+                  </div>
+                </div>
+              ))}
+
+              {isTyping && (
+                <div className="flex justify-start">
+                  <div className="bg-white border border-slate-200 p-2.5 rounded-2xl rounded-bl-none flex items-center gap-1.5 text-slate-400">
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce"></span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce [animation-delay:0.2s]"></span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce [animation-delay:0.4s]"></span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Quick Prompt Chips */}
+            <div className="px-3 py-2 bg-white border-t border-slate-100 flex items-center gap-1.5 overflow-x-auto text-[10px]">
+              <button
+                onClick={() => handleSendChatMessage('Qual o valor do Plano VIP?')}
+                className="px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 shrink-0 font-medium transition-all"
+              >
+                ⚡ Quanto custa o VIP?
+              </button>
+              <button
+                onClick={() => handleSendChatMessage('Como agendar aula grátis?')}
+                className="px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 shrink-0 font-medium transition-all"
+              >
+                🆓 Aula grátis
+              </button>
+              <button
+                onClick={() => handleSendChatMessage('Onde fica a academia?')}
+                className="px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 shrink-0 font-medium transition-all"
+              >
+                📍 Onde fica?
+              </button>
+            </div>
+
+            {/* Chat Input Bar */}
+            <div className="p-2.5 bg-white border-t border-slate-200 flex items-center gap-2">
+              <input
+                type="text"
+                placeholder="Digite sua dúvida aqui..."
+                value={userInput}
+                onChange={(e) => setUserInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSendChatMessage()}
+                className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-alpha-500"
+              />
+              <button
+                onClick={() => handleSendChatMessage()}
+                className="p-2 bg-alpha-500 hover:bg-alpha-600 text-white rounded-xl shadow-xs"
+              >
+                <Send className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 8. Comprehensive Footer */}
       <footer className="bg-[#0B0E14] text-slate-400 py-12 px-4 sm:px-10 border-t border-slate-800 text-xs">
         <div className="max-w-6xl mx-auto space-y-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-8 border-b border-slate-800">

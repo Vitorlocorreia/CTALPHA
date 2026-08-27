@@ -106,7 +106,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const queryParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
   const initialView = queryParams?.get('view') || 'dashboard';
-  const initialTheme = (queryParams?.get('theme') as 'light' | 'dark') || 'light';
+  const initialTheme = (queryParams?.get('theme') as 'light' | 'dark') || (typeof window !== 'undefined' && localStorage.getItem('theme') as 'light' | 'dark') || 'light';
 
   const [currentView, setCurrentView] = useState<string>(initialView);
   const [userRole, setUserRole] = useState<UserRole>('gestor');
@@ -126,6 +126,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isMigrating, setIsMigrating] = useState<boolean>(false);
   const [supabaseConnected, setSupabaseConnected] = useState<boolean>(true);
   const [notification, setNotification] = useState<string | null>(null);
+
+  // Sync theme with HTML root element and localStorage
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+      try {
+        localStorage.setItem('theme', theme);
+      } catch (e) {
+        // ignore
+      }
+    }
+  }, [theme]);
 
   // Sync with Supabase on mount
   useEffect(() => {
