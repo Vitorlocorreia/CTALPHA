@@ -36,7 +36,10 @@ import {
   ChevronDown,
   Info,
   RotateCcw,
-  Scale
+  Scale,
+  ClipboardList,
+  HeartCrack,
+  Edit3
 } from 'lucide-react';
 import { GYM_INFO } from '@/data/mockData';
 import { Goal, Biotype, WorkoutRoutine, BioimpedanceData } from '@/types';
@@ -55,6 +58,7 @@ export const StudentPortalView: React.FC = () => {
     workouts,
     generateWorkoutForStudent,
     approveWorkout,
+    getLatestStudentAssessment,
     showNotification 
   } = useApp();
 
@@ -77,7 +81,11 @@ export const StudentPortalView: React.FC = () => {
     restrictions: []
   };
 
-  const [activeTab, setActiveTab] = useState<'treinos' | 'agenda' | 'bioimpedancia' | 'financeiro' | 'cadastro'>('treinos');
+  const queryParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+  const initialTab = (queryParams?.get('tab') as any) || 'treinos';
+  const [activeTab, setActiveTab] = useState<'treinos' | 'agenda' | 'bioimpedancia' | 'financeiro' | 'cadastro'>(initialTab);
+  const currentAssessment = getLatestStudentAssessment(currentStudent.id);
+  const [isClientAnamnesisModalOpen, setIsClientAnamnesisModalOpen] = useState(false);
 
   // Form State for Dados Cadastrais (Synced with currentStudent)
   const [name, setName] = useState(currentStudent.name);
@@ -1520,6 +1528,61 @@ export const StudentPortalView: React.FC = () => {
 
               </div>
 
+              {/* Seção Permanente: Anamnese e Avaliação do Aluno */}
+              <div className="space-y-3 pt-4 border-t border-slate-200">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <ClipboardList className="w-4 h-4 text-alpha-500" />
+                    <h3 className="text-sm font-bold text-slate-900">Anamnese e Avaliação Física</h3>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsClientAnamnesisModalOpen(true)}
+                    className="px-3.5 py-1.5 bg-alpha-500 hover:bg-alpha-600 text-white font-bold rounded-lg text-xs flex items-center gap-1.5 transition-all shadow-xs"
+                  >
+                    <Info className="w-3.5 h-3.5" />
+                    <span>Ver avaliação completa</span>
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
+                  <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                    <span className="text-[10px] text-slate-400 font-bold block uppercase">Objetivo Principal</span>
+                    <strong className="text-slate-900 font-black text-xs block mt-0.5">{currentAssessment?.primaryGoal || 'Hipertrofia'}</strong>
+                  </div>
+
+                  <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                    <span className="text-[10px] text-slate-400 font-bold block uppercase">Experiência</span>
+                    <strong className="text-slate-900 font-black text-xs block mt-0.5 capitalize">{currentAssessment?.experienceLevel || 'Intermediário'} · {currentAssessment?.trainingYears || 2.5} anos</strong>
+                  </div>
+
+                  <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                    <span className="text-[10px] text-slate-400 font-bold block uppercase">Frequência Semanal</span>
+                    <strong className="text-slate-900 font-black text-xs block mt-0.5">{currentAssessment?.daysPerWeek || 4}x por semana</strong>
+                  </div>
+
+                  <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                    <span className="text-[10px] text-slate-400 font-bold block uppercase">Disponibilidade</span>
+                    <strong className="text-slate-900 font-black text-xs block mt-0.5">{currentAssessment?.sessionDurationMinutes || 60} min / sessão</strong>
+                  </div>
+
+                  <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                    <span className="text-[10px] text-slate-400 font-bold block uppercase">Atenções Clínicas</span>
+                    <strong className="text-amber-600 font-black text-xs block mt-0.5">{currentAssessment?.prescriptionAlerts?.length || 1} informação relevante</strong>
+                  </div>
+
+                  <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                    <span className="text-[10px] text-slate-400 font-bold block uppercase">Restrições Declaradas</span>
+                    <strong className="text-amber-600 font-black text-xs block mt-0.5">{currentAssessment?.avoidMovements?.length || 0} movimentos</strong>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1">
+                  <span>Última atualização: <strong className="text-slate-800">{currentAssessment?.assessmentDate || '26/08/2026'}</strong> por <strong className="text-slate-800">{currentAssessment?.assessorName || 'Coach Diego'}</strong></span>
+                  <span className="text-emerald-600 font-semibold flex items-center gap-1">● Prontuário Ativo</span>
+                </div>
+              </div>
+
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-200">
                 <button
@@ -1650,6 +1713,90 @@ export const StudentPortalView: React.FC = () => {
                 className="flex-1 bg-alpha-500 hover:bg-alpha-600 text-white font-black uppercase tracking-wider py-3 rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5"
               >
                 {isGenerating ? 'Calculando periodização...' : 'Gerar Periodização'}
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Visualizador Completo de Anamnese do Aluno */}
+      {isClientAnamnesisModalOpen && currentAssessment && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="max-w-2xl w-full bg-white rounded-3xl p-6 shadow-2xl space-y-4 text-slate-900 border border-slate-200 animate-scaleUp text-xs max-h-[90vh] overflow-y-auto">
+            
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-alpha-500 text-white flex items-center justify-center">
+                  <ClipboardList className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm text-slate-900">Seu Prontuário de Anamnese & Avaliação</h3>
+                  <p className="text-[11px] text-slate-500">Última revisão: {currentAssessment.assessmentDate} por {currentAssessment.assessorName}</p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsClientAnamnesisModalOpen(false)}
+                className="p-1 rounded-md text-slate-400 hover:text-slate-700"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {/* 1. Dados Físicos */}
+              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                <h4 className="font-bold text-xs uppercase text-slate-800 tracking-wider">1. Dados Físicos & Objetivo</h4>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
+                  <div><span className="text-slate-400 block text-[10px]">Altura:</span><strong>{(Number(currentAssessment.heightCm) / 100).toFixed(2)} m ({currentAssessment.heightCm} cm)</strong></div>
+                  <div><span className="text-slate-400 block text-[10px]">Peso:</span><strong>{currentAssessment.weightKg} kg</strong></div>
+                  <div><span className="text-slate-400 block text-[10px]">Objetivo:</span><strong className="text-alpha-600">{currentAssessment.primaryGoal}</strong></div>
+                  <div><span className="text-slate-400 block text-[10px]">Nível:</span><strong className="capitalize">{currentAssessment.experienceLevel}</strong></div>
+                </div>
+              </div>
+
+              {/* 2. Dores e Limitações */}
+              <div className="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200 space-y-2">
+                <h4 className="font-bold text-xs uppercase text-amber-900 tracking-wider flex items-center gap-1.5">
+                  <HeartCrack className="w-3.5 h-3.5 text-amber-600" />
+                  <span>2. Segurança Articular & Limitações Declaradas</span>
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
+                  <div><span className="text-slate-400 block text-[10px]">Local / Desconforto:</span><strong>{currentAssessment.painDetails?.location || 'Nenhum'} ({currentAssessment.painDetails?.side || 'bilateral'})</strong></div>
+                  <div><span className="text-slate-400 block text-[10px]">Quando surge:</span><strong>{currentAssessment.painDetails?.whenAppears || 'Sob carga pesada'}</strong></div>
+                  <div className="sm:col-span-2"><span className="text-slate-400 block text-[10px]">Exercícios Tolerados / Seguros:</span><strong className="text-emerald-700">{currentAssessment.painDetails?.safeMovements || 'Exercícios com boa estabilização e controle'}</strong></div>
+                </div>
+              </div>
+
+              {/* 3. Disponibilidade e Preferências */}
+              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                <h4 className="font-bold text-xs uppercase text-slate-800 tracking-wider">3. Rotina & Preferências de Treinamento</h4>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px]">
+                  <div><span className="text-slate-400 block text-[10px]">Frequência:</span><strong>{currentAssessment.daysPerWeek} dias / semana</strong></div>
+                  <div><span className="text-slate-400 block text-[10px]">Duração da Sessão:</span><strong>{currentAssessment.sessionDurationMinutes} minutos</strong></div>
+                  <div><span className="text-slate-400 block text-[10px]">Estilo Preferido:</span><strong>{currentAssessment.preferenceWeightsVsMachines === 'maquinas' ? 'Máquinas' : 'Misto (Pesos + Máquinas)'}</strong></div>
+                  <div className="sm:col-span-3"><span className="text-slate-400 block text-[10px]">Exercícios Favoritos:</span><strong>{currentAssessment.favoriteExercises?.join(', ') || 'Supino Reto, Puxada Alta, Leg Press'}</strong></div>
+                </div>
+              </div>
+
+              {/* 4. Notas do Treinador */}
+              <div className="p-3.5 rounded-xl bg-emerald-50/50 border border-emerald-200 space-y-1.5">
+                <h4 className="font-bold text-xs uppercase text-emerald-900 tracking-wider">4. Parecer Profissional do Coach</h4>
+                <p className="text-emerald-950 text-xs leading-relaxed">
+                  {currentAssessment.painDetails?.notes || 'Aluno com ótima resposta para progressão de volume. Programa montado respeitando amplitudes de movimento e periodização científica.'}
+                </p>
+              </div>
+            </div>
+
+            <div className="pt-3 border-t border-slate-200 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setIsClientAnamnesisModalOpen(false)}
+                className="px-6 py-2.5 bg-slate-900 hover:bg-black text-white font-bold rounded-xl text-xs"
+              >
+                Fechar Visualização
               </button>
             </div>
 
