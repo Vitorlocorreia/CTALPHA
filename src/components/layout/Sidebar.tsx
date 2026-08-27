@@ -102,11 +102,17 @@ export const Sidebar: React.FC = () => {
     if (userRole === 'recepcao') {
       return [
         {
-          title: 'RECEPÇÃO & CADASTRO',
+          title: 'RECEPÇÃO & ATENDIMENTO',
           items: [
             { id: 'students', label: 'Alunos & Cadastros', icon: Users },
             { id: 'dashboard', label: 'Acessos & Catraca', icon: FileCheck },
-            { id: 'financial', label: 'Caixa & Recebimento', icon: Receipt },
+            { id: 'commercial', label: 'Leads & Visitas', icon: Kanban },
+          ]
+        },
+        {
+          title: 'CONSULTA',
+          items: [
+            { id: 'landing', label: 'Site Oficial (B2C)', icon: Globe },
           ]
         }
       ];

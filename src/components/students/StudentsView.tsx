@@ -29,6 +29,7 @@ export const StudentsView: React.FC = () => {
   const { 
     students, 
     selectedUnit, 
+    userRole,
     sendWhatsAppBilling, 
     setCurrentView,
     generateWorkoutForStudent,
@@ -393,12 +394,14 @@ export const StudentsView: React.FC = () => {
                 >
                   Visão Geral
                 </button>
-                <button
-                  onClick={() => setDrawerTab('financeiro')}
-                  className={`py-2.5 px-3 border-b-2 transition-all ${drawerTab === 'financeiro' ? 'border-alpha-500 text-slate-900 dark:text-white' : 'border-transparent hover:text-slate-800 dark:hover:text-slate-300'}`}
-                >
-                  Financeiro
-                </button>
+                {userRole !== 'recepcao' && (
+                  <button
+                    onClick={() => setDrawerTab('financeiro')}
+                    className={`py-2.5 px-3 border-b-2 transition-all ${drawerTab === 'financeiro' ? 'border-alpha-500 text-slate-900 dark:text-white' : 'border-transparent hover:text-slate-800 dark:hover:text-slate-300'}`}
+                  >
+                    Financeiro
+                  </button>
+                )}
                 <button
                   onClick={() => setDrawerTab('treinos')}
                   className={`py-2.5 px-3 border-b-2 transition-all ${drawerTab === 'treinos' ? 'border-alpha-500 text-slate-900 dark:text-white' : 'border-transparent hover:text-slate-800 dark:hover:text-slate-300'}`}
@@ -436,7 +439,11 @@ export const StudentsView: React.FC = () => {
                     <div className="p-3 rounded-lg bg-slate-50 dark:bg-[#101522] border border-slate-200 dark:border-slate-800">
                       <span className="text-[11px] text-slate-400 block">Plano Atual</span>
                       <span className="text-sm font-bold text-slate-900 dark:text-white mt-0.5 block">{activeStudentDrawer.planName}</span>
-                      <span className="text-[10px] text-slate-500">R$ {activeStudentDrawer.planValue.toFixed(2)}/mês</span>
+                      {userRole !== 'recepcao' ? (
+                        <span className="text-[10px] text-slate-500">R$ {activeStudentDrawer.planValue.toFixed(2)}/mês</span>
+                      ) : (
+                        <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">● Acesso Ativo</span>
+                      )}
                     </div>
 
                     <div className="p-3 rounded-lg bg-slate-50 dark:bg-[#101522] border border-slate-200 dark:border-slate-800">
@@ -446,9 +453,9 @@ export const StudentsView: React.FC = () => {
                     </div>
 
                     <div className="p-3 rounded-lg bg-slate-50 dark:bg-[#101522] border border-slate-200 dark:border-slate-800">
-                      <span className="text-[11px] text-slate-400 block">Próximo Vencimento</span>
+                      <span className="text-[11px] text-slate-400 block">Vencimento do Acesso</span>
                       <span className="text-sm font-bold text-slate-900 dark:text-white mt-0.5 block">{activeStudentDrawer.dueDate}</span>
-                      <span className="text-[10px] text-slate-500">Cobrança automática ativa</span>
+                      <span className="text-[10px] text-slate-500">Liberação até a data</span>
                     </div>
 
                     <div className="p-3 rounded-lg bg-slate-50 dark:bg-[#101522] border border-slate-200 dark:border-slate-800">

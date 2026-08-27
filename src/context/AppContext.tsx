@@ -109,7 +109,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const initialTheme = (queryParams?.get('theme') as 'light' | 'dark') || (typeof window !== 'undefined' && localStorage.getItem('theme') as 'light' | 'dark') || 'light';
 
   const [currentView, setCurrentView] = useState<string>(initialView);
-  const [userRole, setUserRole] = useState<UserRole>('gestor');
+  const [userRole, setUserRole] = useState<UserRole>((queryParams?.get('role') as UserRole) || 'gestor');
   const [selectedUnit, setSelectedUnit] = useState<UnitId>('todas');
   const [theme, setTheme] = useState<'light' | 'dark'>(initialTheme);
   const [students, setStudents] = useState<Student[]>(INITIAL_STUDENTS);

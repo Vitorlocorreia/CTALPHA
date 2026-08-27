@@ -33,7 +33,7 @@ const PageLoader: React.FC = () => (
 );
 
 export const App: React.FC = () => {
-  const { currentView, setCurrentView, workouts, notification, showNotification } = useApp();
+  const { currentView, setCurrentView, userRole, workouts, notification, showNotification } = useApp();
 
   // Public Landing Page (B2C)
   if (currentView === 'landing') {
@@ -147,7 +147,7 @@ export const App: React.FC = () => {
           {currentView === 'workout_builder' && <WorkoutBuilderView />}
           {currentView === 'exercise_library' && <ExerciseLibraryView />}
           {currentView === 'commercial' && <CommercialAIView />}
-          {currentView === 'financial' && <FinancialView />}
+          {currentView === 'financial' && (userRole !== 'recepcao' ? <FinancialView /> : <StudentsView />)}
           {currentView === 'workout_library' && (
             <Suspense fallback={<PageLoader />}>
               <WorkoutEngineView initialMode="biblioteca" />
@@ -249,23 +249,43 @@ export const App: React.FC = () => {
             <span className="truncate">CRM</span>
           </button>
 
-          <button
-            onClick={() => setCurrentView('financial')}
-            className={`w-full flex flex-col items-center gap-0.5 py-1 text-[9px] sm:text-[10px] font-semibold transition-all ${
-              currentView === 'financial' 
-                ? 'text-alpha-500 font-bold' 
-                : 'text-slate-500 dark:text-slate-400'
-            }`}
-          >
-            <div className={`p-1 rounded-md ${currentView === 'financial' ? 'bg-alpha-500/10' : ''}`}>
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z" />
-                <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
-                <path d="M12 17V7" />
-              </svg>
-            </div>
-            <span className="truncate">Financeiro</span>
-          </button>
+          {userRole !== 'recepcao' ? (
+            <button
+              onClick={() => setCurrentView('financial')}
+              className={`w-full flex flex-col items-center gap-0.5 py-1 text-[9px] sm:text-[10px] font-semibold transition-all ${
+                currentView === 'financial' 
+                  ? 'text-alpha-500 font-bold' 
+                  : 'text-slate-500 dark:text-slate-400'
+              }`}
+            >
+              <div className={`p-1 rounded-md ${currentView === 'financial' ? 'bg-alpha-500/10' : ''}`}>
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z" />
+                  <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
+                  <path d="M12 17V7" />
+                </svg>
+              </div>
+              <span className="truncate">Financeiro</span>
+            </button>
+          ) : (
+            <button
+              onClick={() => setCurrentView('landing')}
+              className={`w-full flex flex-col items-center gap-0.5 py-1 text-[9px] sm:text-[10px] font-semibold transition-all ${
+                currentView === 'landing' 
+                  ? 'text-alpha-500 font-bold' 
+                  : 'text-slate-500 dark:text-slate-400'
+              }`}
+            >
+              <div className={`p-1 rounded-md ${currentView === 'landing' ? 'bg-alpha-500/10' : ''}`}>
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+                  <path d="M2 12h20" />
+                </svg>
+              </div>
+              <span className="truncate">Site Oficial</span>
+            </button>
+          )}
         </nav>
       </div>
 
