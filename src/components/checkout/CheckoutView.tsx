@@ -164,7 +164,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({
             </div>
 
             <div className="pt-2 border-t border-slate-700 flex items-center justify-between text-[11px] text-emerald-400 font-bold">
-              <span>Status: Liberado na Catraca</span>
+              <span>Status: Matrícula Ativa & Liberada</span>
               <span>Vencimento: 26/09/2026</span>
             </div>
           </div>
@@ -313,7 +313,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({
                 </div>
 
                 <p className="text-[11px] text-slate-500 leading-relaxed pt-2">
-                  Utilizamos seus dados pessoais para o cadastro em nossa plataforma, geração da ficha de treino e liberação nas catracas do CT ALPHA. Seus dados estão 100% seguros sob a LGPD.
+                  Utilizamos seus dados pessoais para o cadastro em nossa plataforma, geração da ficha de treino e liberação no aplicativo do CT ALPHA. Seus dados estão 100% seguros sob a LGPD.
                 </p>
 
                 <button
@@ -513,7 +513,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({
                     </div>
                     <h4 className="text-sm font-bold text-slate-900">Pagamento via PIX Automático</h4>
                     <p className="text-xs text-slate-600 max-w-sm mx-auto">
-                      O código PIX dinâmico será gerado no valor de <strong>R$ {currentPlanInfo.price.toFixed(2)}</strong> com liberação imediata da catraca no banco.
+                      O código PIX dinâmico será gerado no valor de <strong>R$ {currentPlanInfo.price.toFixed(2)}</strong> com liberação imediata no aplicativo e sistema.
                     </p>
                   </div>
                 )}

@@ -102,8 +102,8 @@ export const LoginView: React.FC = () => {
                 <span className="font-bold text-slate-900 dark:text-white group-hover:text-alpha-500">Recepção</span>
                 <Users className="w-3.5 h-3.5 text-slate-400" />
               </div>
-              <span className="text-[10px] text-slate-500 block">Frente de Caixa</span>
-              <span className="text-[9px] text-emerald-600 font-semibold block mt-1">→ Alunos & Catraca</span>
+              <span className="text-[10px] text-slate-500 block">Frente de Recepção</span>
+              <span className="text-[9px] text-emerald-600 font-semibold block mt-1">→ Alunos & Atendimento</span>
             </button>
 
             {/* Treinador */}

@@ -125,14 +125,14 @@ export const DashboardView: React.FC = () => {
           </div>
         </div>
 
-        {/* KPI 2: Check-ins na Catraca */}
+        {/* KPI 2: Check-ins e Frequência */}
         <div className="p-4 rounded-xl bg-white dark:bg-[#101522] border border-slate-200 dark:border-slate-800 shadow-xs">
-          <span className="text-xs font-medium text-slate-500 dark:text-slate-400 block">Acessos na Catraca Hoje</span>
+          <span className="text-xs font-medium text-slate-500 dark:text-slate-400 block">Check-ins & Presença Hoje</span>
           <div className="text-2xl font-bold text-slate-900 dark:text-white mt-1">
             {unitCheckIns.length}
           </div>
           <div className="flex items-center gap-1 mt-1 text-xs text-slate-600 dark:text-slate-400 font-medium">
-            <span>Acessos validados na portaria</span>
+            <span>Presenças confirmadas na recepção</span>
           </div>
         </div>
 
@@ -167,7 +167,7 @@ export const DashboardView: React.FC = () => {
           <>
             {/* KPI 3 (Recepção): Alunos a Renovar */}
             <div className="p-4 rounded-xl bg-white dark:bg-[#101522] border border-slate-200 dark:border-slate-800 shadow-xs">
-              <span className="text-xs font-medium text-slate-500 dark:text-slate-400 block">Avisos de Catraca / Renovação</span>
+              <span className="text-xs font-medium text-slate-500 dark:text-slate-400 block">Avisos de Matrícula / Renovação</span>
               <div className="text-2xl font-bold text-amber-600 dark:text-amber-400 mt-1">
                 {warningCount + lateCount}
               </div>
@@ -287,7 +287,7 @@ export const DashboardView: React.FC = () => {
           <div className="lg:col-span-8 p-5 rounded-xl bg-white dark:bg-[#101522] border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
             <div className="border-b border-slate-100 dark:border-slate-800 pb-3">
               <h3 className="text-sm font-bold text-slate-900 dark:text-white">Ações Rápidas da Recepção</h3>
-              <p className="text-xs text-slate-500">Atendimento rápido ao aluno e controle de acesso da catraca</p>
+              <p className="text-xs text-slate-500">Atendimento rápido ao aluno e controle de presença</p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -310,7 +310,7 @@ export const DashboardView: React.FC = () => {
                   <Search className="w-5 h-5" />
                 </div>
                 <h4 className="font-bold text-xs text-slate-900 dark:text-white">Consultar Aluno / CPF</h4>
-                <p className="text-[11px] text-slate-500">Buscar matrícula e status de liberação.</p>
+                <p className="text-[11px] text-slate-500">Buscar matrícula e situação cadastral.</p>
               </button>
 
               <button
@@ -331,8 +331,8 @@ export const DashboardView: React.FC = () => {
                   ✓
                 </div>
                 <div>
-                  <h5 className="font-bold text-xs text-emerald-900 dark:text-emerald-300">Catraca Inteligente Operando</h5>
-                  <p className="text-[11px] text-emerald-800 dark:text-emerald-400">Validação biométrica e QR Code em tempo real ativa.</p>
+                  <h5 className="font-bold text-xs text-emerald-900 dark:text-emerald-300">Recepção & Check-ins Ativos</h5>
+                  <p className="text-[11px] text-emerald-800 dark:text-emerald-400">Identificação de alunos e frequência em tempo real.</p>
                 </div>
               </div>
               <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300">● 100% Online</span>
@@ -399,7 +399,7 @@ export const DashboardView: React.FC = () => {
 
       </div>
 
-      {/* Registro Recente de Check-ins / Catraca (Acessos dos alunos) */}
+      {/* Registro Recente de Check-ins (Presença dos alunos) */}
       <div className="p-5 rounded-xl bg-white dark:bg-[#101522] border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
         <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
           <div>

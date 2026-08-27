@@ -56,7 +56,7 @@ export const Sidebar: React.FC = () => {
     {
       title: 'OPERAÇÃO',
       items: [
-        { id: 'dashboard', label: 'Visão Geral & Catraca', icon: LayoutDashboard },
+        { id: 'dashboard', label: 'Visão Geral & Métricas', icon: LayoutDashboard },
         { id: 'students', label: 'Alunos', icon: Users },
       ]
     },
@@ -105,7 +105,7 @@ export const Sidebar: React.FC = () => {
           title: 'RECEPÇÃO & ATENDIMENTO',
           items: [
             { id: 'students', label: 'Alunos & Cadastros', icon: Users },
-            { id: 'dashboard', label: 'Acessos & Catraca', icon: FileCheck },
+            { id: 'dashboard', label: 'Visão Geral & Check-ins', icon: FileCheck },
             { id: 'commercial', label: 'Leads & Visitas', icon: Kanban },
           ]
         },

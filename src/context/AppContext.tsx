@@ -960,7 +960,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setCheckIns([newLog, ...checkIns]);
     return {
       success: student.paymentStatus !== 'atrasado',
-      message: student.paymentStatus === 'atrasado' ? 'Acesso Bloqueado: Fatura Pendente' : 'Catraca Liberada!',
+      message: student.paymentStatus === 'atrasado' ? 'Acesso Bloqueado: Fatura Pendente' : 'Check-in Confirmado com Sucesso!',
       status: student.paymentStatus === 'atrasado' ? 'bloqueado' as const : 'liberado' as const
     };
   };

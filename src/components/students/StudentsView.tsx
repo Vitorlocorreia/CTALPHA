@@ -277,7 +277,7 @@ export const StudentsView: React.FC = () => {
                 <th className="px-4 py-3">Aluno</th>
                 <th className="px-3 py-3">Unidade</th>
                 <th className="px-3 py-3">Plano</th>
-                <th className="px-3 py-3">Status Catraca</th>
+                <th className="px-3 py-3">Status Matrícula</th>
                 <th className="px-3 py-3">Último Acesso</th>
                 <th className="px-3 py-3">Vencimento</th>
                 <th className="px-4 py-3 text-right">Ação</th>

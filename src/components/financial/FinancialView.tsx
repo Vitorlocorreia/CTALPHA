@@ -258,7 +258,7 @@ export const FinancialView: React.FC = () => {
             {activeRuleTab === 'late' && (
               <p>
                 Olá, <strong>Marcos Vinícius</strong>. Constatamos uma pendência na mensalidade do seu plano (vencida em 22/08).<br /><br />
-                Para regularizar seu acesso imediatamente sem bloqueios na catraca, efetue o pagamento no PIX abaixo:
+                Para regularizar seu plano e manter seus treinos liberados no aplicativo, efetue o pagamento no PIX abaixo:
               </p>
             )}
 
